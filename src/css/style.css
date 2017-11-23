@@ -1,0 +1,110 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900);
+body {
+  font-family: 'Roboto',sans-serif;
+  font-weight: 300;
+  background: #D9D9D9;
+  position: relative; }
+  body #app {
+    padding: 100px 0; }
+  body .fixed_header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #083C5D;
+    z-index: 2; }
+
+h1.greet-message {
+  text-align: center;
+  font-weight: 300; }
+
+ul.list-group {
+  list-style: none;
+  margin: 20px auto;
+  padding: 0;
+  text-align: center; }
+  ul.list-group li {
+    display: inline-block;
+    padding: 10px;
+    background: #FFEB3B;
+    margin: 0 5px;
+    transform: skewX(7deg) skewY(2deg); }
+
+.fork-me {
+  position: fixed;
+  top: 0;
+  right: 0;
+  border: 0;
+  max-width: 50%;
+  z-index: 3;
+  display: none;
+  cursor: pointer; }
+  .fork-me img {
+    max-width: 100%;
+    cursor: pointer; }
+
+.pixel_color_input {
+  border: 5px solid #000; }
+
+.pixel_tools_menu {
+  position: relative;
+  display: block;
+  margin: 0;
+  padding: 0; }
+  .pixel_tools_menu .pixel_tool {
+    padding: 10px;
+    box-sizing: border-box;
+    display: inline-block;
+    height: 60px;
+    vertical-align: middle; }
+    .pixel_tools_menu .pixel_tool .page-link.icon_item {
+      padding-top: 0;
+      padding-bottom: 0;
+      padding-left: .5rem;
+      padding-right: .5rem; }
+      .pixel_tools_menu .pixel_tool .page-link.icon_item svg {
+        max-height: 36px;
+        margin: 0;
+        display: block; }
+    .pixel_tools_menu .pixel_tool .color_swatch {
+      width: 60px;
+      height: 100%;
+      position: relative;
+      display: block;
+      box-shadow: inset 0 0 0px 5px #fff; }
+      .pixel_tools_menu .pixel_tool .color_swatch svg {
+        width: 20px;
+        padding: 1px;
+        display: block;
+        margin: 0 auto; }
+      .pixel_tools_menu .pixel_tool .color_swatch .github-picker {
+        z-index: 3 !important;
+        display: none !important;
+        width: 215px !important;
+        position: absolute !important;
+        bottom: -55px !important; }
+        .pixel_tools_menu .pixel_tool .color_swatch .github-picker.open {
+          display: flex !important; }
+    .pixel_tools_menu .pixel_tool .btn {
+      display: block;
+      height: 100%;
+      padding: 0 1rem; }
+      .pixel_tools_menu .pixel_tool .btn svg {
+        height: 100%; }
+    .pixel_tools_menu .pixel_tool svg {
+      width: 20px;
+      height: 40px;
+      fill: #fff; }
+
+.css-preview-block {
+  width: 300px;
+  height: 300px;
+  position: relative; }
+
+textarea {
+  width: 100%;
+  min-height: 200px; }
+
+@media only screen and (min-width: 600px) {
+  .fork-me {
+    display: block; } }

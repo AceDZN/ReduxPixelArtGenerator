@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.org/AceDZN/ReduxPixelArtGenerator.svg?branch=master)](https://travis-ci.org/AceDZN/ReduxDoubleTrouble)
 # ReduxPixelArtGenerator
 React, Redux, Gulp
 
