@@ -4,7 +4,6 @@ export default function(state = null, action){
         case 'PIXEL_COLOR_SELECTED':
             return action.payload;
         default:
-            console.log('DEFAULT COLOR', action.type);
             return state
     }
 }

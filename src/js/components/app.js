@@ -3,6 +3,7 @@ import ForkBanner from './fork-banner';
 import PixelCanvas from '../containers/pixel-canvas';
 import PreviewBlock from '../containers/preview-block';
 import CanvasToolsMenu from '../containers/tools-menu';
+import CssCodeBlock from '../containers/css-code-block';
 
 export default class App extends Component {
     render() {
@@ -17,6 +18,9 @@ export default class App extends Component {
                         </div>
                         <div className="col">
                             <PreviewBlock />
+                        </div>
+                        <div className="col">
+                            <CssCodeBlock />
                         </div>
                     </div>
                 </div>

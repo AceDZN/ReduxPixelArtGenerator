@@ -18,10 +18,10 @@ export function setPixelColor(pixel_color){
         payload: pixel_color
     }
 }
-export function setCanvasSize(width,height){
+export function setCanvasDefaults(props){
     return {
-        type: 'CANVAS_SIZE_SELECTED',
-        payload: {width,height}
+        type: 'CANVAS_PROPS_SELECTED',
+        payload: props
     }
 }
 
@@ -35,5 +35,23 @@ export function setCanvasContext(ctx){
     return {
         type: 'CANVAS_CTX',
         payload: ctx
+    }
+}
+export function generateCSSPixelArt(setup){
+    return {
+        type: 'GENERATE_PIXEL_CSS',
+        payload: setup
+    }
+}
+export function setUploadedImage(image){
+    return {
+        type: 'SET_UPLOADED_IMAGE',
+        payload: image
+    }
+}
+export function loadUploadedImage(image){
+    return {
+        type: 'LOAD_UPLOADED_IMAGE',
+        payload: image
     }
 }

@@ -6,15 +6,27 @@ import {bindActionCreators} from 'redux';
 
 
 class PixelCanvas extends Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+          uploaded_image: ''
+      };
+    }
     componentDidMount() {
         this.props.setCanvasContext(this.canvas.getContext('2d'));
         this.resetCanvas();
     }
+
+
     componentWillReceiveProps(nextProps){
         if(nextProps.canvas_clear!==this.props.canvas_clear){
             this.resetCanvas();
             this.props.clearCanvas(false);
         }
+        if(nextProps.uploaded_image){
+            this.setState({uploaded_image:nextProps.uploaded_image})
+        }
+
 
     }
     resetCanvas() {
@@ -40,7 +52,7 @@ class PixelCanvas extends Component {
         this.ctx.fillStyle = "#ffffff";
         this.ctx.fillRect(0,0,w,h);
 
-        for(var i = .5; i < w || i < h; i += 10) {
+        for(var i = .5; i < w || i < h; i += this.props.defaults.default_pixel_size) {
             // draw horizontal lines
             this.ctx.moveTo( i, 0 );
             this.ctx.lineTo( i, h);
@@ -110,12 +122,33 @@ class PixelCanvas extends Component {
         }
     }
 
+    renderUploadedImage(){
+        if(!this.state.uploaded_image || this.state.uploaded_image == '') return;
+        const imageStyle = {
+            width:this.props.defaults.canvas_width,
+            height:this.props.defaults.canvas_height,
+        };
+        if(this.state.uploaded_image == "Loading"){
+            return (
+                <h1 >Loading</h1>
+            )
+        } else {
 
+            var image = new Image();
+            image.onload = function() {
+                this.resetCanvas();
+                this.ctx.drawImage(image, 0, 0,imageStyle.width ,imageStyle.height);
+            }.bind(this);
+            image.src = this.state.uploaded_image;
+            return ''
+        }
+    }
     render(){
         return (
             <div>
                 <h1>Pixel CANVAS</h1>
-                <canvas ref={(c) => this.canvas = c} width={this.props.canvas_width} height={this.props.canvas_height} onMouseDown={this._onMouseDown.bind(this)} ></canvas>
+                <canvas ref={(c) => this.canvas = c} width={this.props.defaults.canvas_width} height={this.props.defaults.canvas_height} onMouseDown={this._onMouseDown.bind(this)} ></canvas>
+                <div>{this.renderUploadedImage()}</div>
             </div>
         )
     }
@@ -123,12 +156,12 @@ class PixelCanvas extends Component {
 
 function mapStateToProps(state) {
   return {
-    pixel_size: state.pixel_size,
-    pixel_color: state.pixel_color,
-    canvas_width: state.canvas_setup.width,
-    canvas_height: state.canvas_setup.height,
-    canvas_clear: state.canvas_clear,
-    canvas_ctx: state.canvas_ctx
+      defaults: state.defaults,
+      pixel_size: state.pixel_size,
+      pixel_color: state.pixel_color,
+      canvas_clear: state.canvas_clear,
+      canvas_ctx: state.canvas_ctx,
+      uploaded_image: state.uploaded_image
   }
 }
 
