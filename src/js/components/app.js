@@ -19,7 +19,7 @@ export default class App extends Component {
                         <div className="col">
                             <PreviewBlock />
                         </div>
-                        <div className="col">
+                        <div className="css-code-block">
                             <CssCodeBlock />
                         </div>
                     </div>

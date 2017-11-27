@@ -1,20 +1,21 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import { GithubPicker } from 'react-color';
-import {setPixelColor, setPixelSize, setCanvasDefaults, clearCanvas,setUploadedImage,loadUploadedImage} from '../actions/index';
+import { TwitterPicker } from 'react-color';
+import {setPixelColor, setPixelSize, setCanvasDefaults, clearCanvas,setUploadedImage,loadUploadedImage,setRenderPixelSize} from '../actions/index';
 import {bindActionCreators} from 'redux';
 
+const DEFAULT_PIXEL_SIZE = 10;
+const RENDER_PIXEL_SIZE = 4;
+const DEFAULT_CANVAS_WIDTH = 480 || (RENDER_PIXEL_SIZE*30);
+const DEFAULT_CANVAS_HEIGHT = 480 || (RENDER_PIXEL_SIZE*30);
 
-const DEFAULT_PIXEL_SIZE = 4;
-const DEFAULT_CANVAS_WIDTH = 300;
-const DEFAULT_CANVAS_HEIGHT = 300;
 
 class CanvasToolsMenu extends Component {
     constructor(props) {
       super(props);
 
       this.state = {
-          default_props: {default_pixel_size: DEFAULT_PIXEL_SIZE,pixel_color:"#000000", pixel_size:DEFAULT_PIXEL_SIZE, canvas_width:DEFAULT_CANVAS_WIDTH, canvas_height:DEFAULT_CANVAS_HEIGHT},
+          default_props: {render_pixel_size: RENDER_PIXEL_SIZE, pixel_color: "#000000", pixel_size: DEFAULT_PIXEL_SIZE, canvas_width: DEFAULT_CANVAS_WIDTH, canvas_height: DEFAULT_CANVAS_HEIGHT},
           color_pallete_open: false,
           image_source: "BLA?"
 
@@ -26,6 +27,16 @@ class CanvasToolsMenu extends Component {
         this.props.setPixelSize(this.state.default_props.pixel_size);
         this.props.setCanvasDefaults(this.state.default_props);
     }
+    componentDidMount(){
+
+    }
+    componentWillReceiveProps(newProps){
+        if(newProps.defaults){
+            console.log(newProps.defaults,"newProps.defaults");
+        }
+
+
+    }
 
     onColorInputChange(c){
         if(!c || !c.hex) return
@@ -36,45 +47,96 @@ class CanvasToolsMenu extends Component {
         if(!e || !e.target || !e.target.files){return;}
         this.props.loadUploadedImage();
         const currentFile = e.target.files[0];
-        var reader = new FileReader();
-        reader.onload = function(event) {
-            this.props.setUploadedImage(event.target.result);
-        }.bind(this);
-        reader.readAsDataURL(currentFile);
+        try{
+            var reader = new FileReader();
+            reader.onload = function(event) {
+                this.props.setUploadedImage(event.target.result);
+            }.bind(this);
+            reader.readAsDataURL(currentFile);
+        } catch(err){
+            console.warn(err,"err");
+        }
+
     }
-    getPaginationClassName(c){
-            if(c == this.props.pixel_size){
-                return "page-item active"
-            } else {
-                return "page-item"
-            }
+    getBrushesPaginationClassName(c){
+        if(c == this.props.pixel_size){
+            return "page-item active"
+        } else {
+            return "page-item"
+        }
+    }
+    getRenderPaginationClassName(c){
+        if(c == this.props.defaults.render_pixel_size){
+            return "page-item active"
+        } else {
+            return "page-item"
+        }
     }
     resetCanvas(){
         this.props.clearCanvas(true);
+    }
+    openPallete(){
+        if(!this.state.color_pallete_open){
+            this.setState({color_pallete_open: !this.state.color_pallete_open})
+        }
+    }
+    closePallete(){
+        if(!!this.state.color_pallete_open){
+            this.setState({color_pallete_open: !this.state.color_pallete_open})
+        }
+    }
+    renderBrushSizePicker(){
+        if(this.props.defaults){
+            let pixel_brushes = [4, 8, 10, 12, 16, 19 ];
+            let brush_elements = pixel_brushes.map(function(brush){
+                return (<li key={"brush_size_"+brush} className={this.getBrushesPaginationClassName(brush)}  onClick={()=>this.props.setPixelSize(brush)}><a className="page-link" href="#" >{brush}</a></li>)
+            }.bind(this));
+            return (
+                <ul className="pagination">
+                    <li className="page-item active "><a className="page-link icon_item" href="#" ><svg dangerouslySetInnerHTML={{__html: this.pixelSizeSVG }} /></a></li>
+                    {brush_elements}
+                </ul>
+            );
+        }
+    }
+    RenderSizePicker(){
+        if(this.props.defaults){
+            let pixel_sizes = [2, 4, 8, 10, 12];
+            let brush_elements = pixel_sizes.map(function(size){
+                return (<li key={"pixel_size_"+size} className={this.getRenderPaginationClassName(size)}  onClick={()=>this.props.setRenderPixelSize(size)}><a className="page-link" href="#" >{size}</a></li>)
+            }.bind(this));
+            return (
+                <ul className="pagination">
+                    <li className="page-item active "><a className="page-link icon_item" href="#" ><svg dangerouslySetInnerHTML={{__html: this.pixelSizeSVG }} /></a></li>
+                    {brush_elements}
+                </ul>
+            );
+        }
+    }
+    renderPixelSize(){
+        if(!!this.props.defaults){return(
+            <div>{this.props.defaults.render_pixel_size}</div>
+        )}
     }
     render(){
         const colorStyle = {
           backgroundColor: this.props.pixel_color,
         };
 
-        const pixelSizeSVG = '<use xlink:href="/images/svg/solid.svg#octagon" />';
+        this.pixelSizeSVG = '<use xlink:href="/images/svg/solid.svg#octagon" />';
         const pixelColorSVG = '<use xlink:href="/images/svg/solid.svg#eye-dropper" />';
         const clearCanvasSVG = '<use xlink:href="/images/svg/solid.svg#eraser" />';
-        let pixel_size_1  = 0, pixel_size_2 = 0, pixel_size_3 = 0, pixel_size_4 = 0;
-        if(this.props.defaults){
-            pixel_size_1 = this.props.defaults.default_pixel_size;
-            pixel_size_2 = (this.props.defaults.default_pixel_size*2);
-            pixel_size_3 = (this.props.defaults.default_pixel_size*4);
-            pixel_size_4 = (this.props.defaults.default_pixel_size*6);
-        }
-        return (
-            <nav className="fixed_header">
+        let pixel_brushes=[]
 
+
+
+        return (
+            <nav className="fixed_header" onClick={this.closePallete.bind(this)}>
                 <ul className="pixel_tools_menu">
                     <li className="pixel_tool">
-                        <div className="color_swatch" onClick={()=>this.setState({color_pallete_open: !this.state.color_pallete_open})} style={colorStyle}>
+                        <div className="color_swatch" onClick={this.openPallete.bind(this)} style={colorStyle}>
                             <svg dangerouslySetInnerHTML={{__html: pixelColorSVG }} />
-                            <GithubPicker
+                            <TwitterPicker
                                 className={(!!this.state.color_pallete_open?'open':'closed')}
                                 color={ this.props.pixel_color || this.state.default_props.pixel_color }
                                 onChangeComplete={ (e)=>this.onColorInputChange(e) }
@@ -83,23 +145,19 @@ class CanvasToolsMenu extends Component {
 
                     </li>
                     <li className="pixel_tool">
-                        <ul className="pagination">
-                            <li className="page-item active "><a className="page-link icon_item" href="#" ><svg dangerouslySetInnerHTML={{__html: pixelSizeSVG }} /></a></li>
-                            <li className={this.getPaginationClassName(pixel_size_1)}  onClick={()=>this.props.setPixelSize(pixel_size_1)}><a className="page-link" href="#" >{pixel_size_1}</a></li>
-                            <li className={this.getPaginationClassName(pixel_size_2)} onClick={()=>this.props.setPixelSize(pixel_size_2)}><a className="page-link" href="#" >{pixel_size_2}</a></li>
-                            <li className={this.getPaginationClassName(pixel_size_3)} onClick={()=>this.props.setPixelSize(pixel_size_3)}><a className="page-link" href="#" >{pixel_size_3}</a></li>
-                            <li className={this.getPaginationClassName(pixel_size_4)} onClick={()=>this.props.setPixelSize(pixel_size_4)}><a className="page-link" href="#" >{pixel_size_4}</a></li>
-                        </ul>
+                        {this.renderBrushSizePicker()}
+
                     </li>
+                    <li className="pixel_tool">{this.RenderSizePicker()}</li>
 
                     <li className="pixel_tool">
                         <button className="btn btn-danger" onClick={()=>this.resetCanvas(true)}><svg dangerouslySetInnerHTML={{__html: clearCanvasSVG }} /></button>
                     </li>
-                    <li className="btn btn-warning">{this.state.image_source}</li>
-                    <li className="hidden-md-down">
+                    <li className="pixel_tool hidden-md-down">
                         <input type="file" onChange={(e)=>this.onFilePreview(e)} />
                     </li>
                 </ul>
+                {this.renderPixelSize()}
             </nav>
 
         )
@@ -119,12 +177,13 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch){
   return bindActionCreators({
-      setPixelColor:setPixelColor,
-      setPixelSize:setPixelSize,
-      setCanvasDefaults:setCanvasDefaults,
-      clearCanvas:clearCanvas,
-      setUploadedImage:setUploadedImage,
-      loadUploadedImage:loadUploadedImage
+      setPixelColor,
+      setPixelSize,
+      setCanvasDefaults,
+      clearCanvas,
+      setUploadedImage,
+      loadUploadedImage,
+      setRenderPixelSize
   }, dispatch);
 }
 export default connect(mapStateToProps,mapDispatchToProps)(CanvasToolsMenu);

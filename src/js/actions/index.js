@@ -24,6 +24,13 @@ export function setCanvasDefaults(props){
         payload: props
     }
 }
+export function setRenderPixelSize(props){
+    return {
+        type: 'SET_RENDER_PIXELS_DEFAULT',
+        payload: props
+    }
+}
+
 
 export function clearCanvas(clear){
     return {
@@ -40,6 +47,12 @@ export function setCanvasContext(ctx){
 export function generateCSSPixelArt(setup){
     return {
         type: 'GENERATE_PIXEL_CSS',
+        payload: setup
+    }
+}
+export function addToShadowArray(setup){
+    return {
+        type: 'ADD_TO_SHADOW_ARRAY',
         payload: setup
     }
 }

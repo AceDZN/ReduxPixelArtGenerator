@@ -77,14 +77,15 @@ ul.list-group {
         padding: 1px;
         display: block;
         margin: 0 auto; }
-      .pixel_tools_menu .pixel_tool .color_swatch .github-picker {
-        z-index: 3 !important;
+      .pixel_tools_menu .pixel_tool .color_swatch .twitter-picker {
         display: none !important;
-        width: 215px !important;
+        width: 280px !important;
         position: absolute !important;
-        bottom: -55px !important; }
-        .pixel_tools_menu .pixel_tool .color_swatch .github-picker.open {
-          display: flex !important; }
+        bottom: -55px !important;
+        z-index: 13 !important; }
+        .pixel_tools_menu .pixel_tool .color_swatch .twitter-picker.open {
+          display: flex !important;
+          z-index: 13 !important; }
     .pixel_tools_menu .pixel_tool .btn {
       display: block;
       height: 100%;
@@ -104,6 +105,30 @@ ul.list-group {
 textarea {
   width: 100%;
   min-height: 200px; }
+
+.canvas_wrap {
+  position: relative; }
+  .canvas_wrap canvas.grid_canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0; }
+  .canvas_wrap canvas.pixel_canvas {
+    position: relative;
+    top: 0;
+    left: 0;
+    z-index: 2; }
+
+.css-code-block {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 500px;
+  height: 500px;
+  transform: translate(100%);
+  transition: transform 1s; }
+  .css-code-block:hover {
+    transform: translate(50%); }
 
 @media only screen and (min-width: 600px) {
   .fork-me {

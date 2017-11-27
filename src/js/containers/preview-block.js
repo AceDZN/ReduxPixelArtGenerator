@@ -8,7 +8,8 @@ class PreviewBlock extends Component {
       super(props);
       this.state = {
           box_shadow: ' 0 0 0 transparent',
-          css_pixel_text:''
+          css_pixel_text:'',
+          render_pixel_size: this.props.defaults.render_pixel_size
       };
     }
 
@@ -19,14 +20,21 @@ class PreviewBlock extends Component {
                 box_shadow: props.css_generator.box_shadow
             });
         }
+
+
     }
 
+    generateCSSPixelArt(css_setup){
+        this.setState({render_pixel_size:this.props.defaults.render_pixel_size})
+        css_setup.pixel_size = this.props.defaults.render_pixel_size;
+        this.props.generateCSSPixelArt(css_setup)
+    }
     render(){
         const output_text = "";
         const output_style = {
             display: 'inline-block',
-            width: this.props.defaults.default_pixel_size,
-            height: this.props.defaults.default_pixel_size,
+            width: this.state.render_pixel_size,
+            height: this.state.render_pixel_size,
             position:'relative',
             //margin: (this.min_height?'-' + this.min_height + 'px ' + this.max_width + 'px ' + this.max_height + 'px -' + this.min_width + 'px': '0 0'),
             boxShadow: this.state.box_shadow
@@ -34,17 +42,16 @@ class PreviewBlock extends Component {
 
         const css_setup = {
             ctx: this.props.canvas_ctx,
-            pixel_size: this.props.defaults.default_pixel_size,
+            pixel_size: this.state.render_pixel_size,
             canvas_width: this.props.defaults.canvas_width,
             canvas_height: this.props.defaults.canvas_height
         };
 
         return (
             <div>
-                <button onClick={()=>{this.props.generateCSSPixelArt(css_setup)}}>Generate CSS</button>
+                <button onClick={()=>{this.generateCSSPixelArt(css_setup)}}>Generate CSS</button>
                 <div className="css-preview-block">
                     <div className="pixels" style={output_style}></div>
-
                 </div>
             </div>
         )
@@ -56,7 +63,6 @@ function mapStateToProps(state) {
       defaults: state.defaults,
       pixel_size: state.pixel_size,
       pixel_color: state.pixel_color,
-      canvas_clear: state.canvas_clear,
       canvas_ctx: state.canvas_ctx,
       css_generator: state.css_generator,
       uploaded_image: state.uploaded_image

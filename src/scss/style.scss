@@ -90,14 +90,16 @@ ul.list-group{
                 display: block;
                 margin: 0 auto;
             }
-            .github-picker{
-                z-index: 3!important;
+            .twitter-picker{
+
                 display: none!important;
-                width: 215px!important;
+                width: 280px!important;
                 position: absolute!important;
                 bottom: -55px!important;
+                z-index: 13!important;
                 &.open{
                     display: flex!important;
+                    z-index: 13!important;
                 }
             }
         }
@@ -125,6 +127,36 @@ textarea{
     width: 100%;
     min-height: 200px;
 }
+
+.canvas_wrap{
+    position: relative;
+    canvas.grid_canvas{
+        position:absolute;
+        top:0;
+        left:0;
+        z-index:0;
+    }
+    canvas.pixel_canvas{
+        position:relative;
+        top:0;
+        left:0;
+        z-index:2;
+    }
+}
+
+.css-code-block{
+    position: absolute;
+    top: 50px;
+    right: 0;
+    width: 500px;
+    height: 500px;
+    transform: translate(100%);
+    transition: transform 1s;
+    &:hover{
+        transform: translate(50%);
+    }
+}
+
 @media only screen and (min-width: 600px){
     .fork-me{
         display:block;

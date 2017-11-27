@@ -28,11 +28,6 @@ class CssCodeBlock extends Component {
 
 function mapStateToProps(state) {
   return {
-    default_pixel_size: state.default_pixel_size,
-    pixel_size: state.pixel_size,
-    canvas_width: state.canvas_width,
-    canvas_height: state.canvas_height,
-    canvas_ctx: state.canvas_ctx,
     css_generator: state.css_generator
   }
 }
