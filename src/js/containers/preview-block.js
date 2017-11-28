@@ -1,57 +1,88 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {generateCSSPixelArt} from '../actions/index';
 import {bindActionCreators} from 'redux';
+import {clearCanvas} from '../actions/index';
 
 class PreviewBlock extends Component {
     constructor(props) {
       super(props);
       this.state = {
-          box_shadow: ' 0 0 0 transparent',
-          css_pixel_text:'',
-          render_pixel_size: this.props.defaults.render_pixel_size
+          box_shadow: '0 0 0 transparent',
+          generated_text:'',
+          render_pixel_size: this.props.default_props.render_pixel_size,
+          default_props: this.props.default_props
       };
     }
 
     componentWillReceiveProps(props) {
+        if(props.canvas_clear!==this.props.canvas_clear){
+            this.props.clearCanvas(false);
+        }
         if(!!props.css_generator){
-            this.setState({
-                css_pixel_text: props.css_generator.css_pixel_text,
-                box_shadow: props.css_generator.box_shadow
-            });
+            if(!props.css_generator.type || props.css_generator.type=='css'){
+                this.setState({
+                    generated_text: props.css_generator.generated_text,
+                    box_shadow: props.css_generator.box_shadow,
+                    svg_image:false
+                });
+            } else if(props.css_generator.type=='svg'){
+                this.setState({
+                    generated_text: props.css_generator.generated_text,
+                    box_shadow:false,
+                    svg_image: true
+                });
+            } else if(props.css_generator.type=='png'){
+                this.setState({
+                    generated_text: props.css_generator.generated_text,
+                    box_shadow:false,
+                    svg_image: props.css_generator.png_image||''
+                });
+            }
         }
 
 
     }
 
-    generateCSSPixelArt(css_setup){
-        this.setState({render_pixel_size:this.props.defaults.render_pixel_size})
-        css_setup.pixel_size = this.props.defaults.render_pixel_size;
-        this.props.generateCSSPixelArt(css_setup)
+    generatePixelArt(css_setup,type){
+        this.setState({render_pixel_size:this.props.default_props.render_pixel_size})
+        css_setup.pixel_size = this.props.default_props.render_pixel_size;
+        if(!type || type== 'css'){
+            this.props.generatePixelArtCss(css_setup);
+        } else if(type== 'svg'){
+            this.props.generatePixelArtSvg(css_setup);
+        } else if(type== 'png'){
+            this.props.generatePixelArtPng(css_setup);
+        }
+
+    }
+    renderPreview(){
+        if((this.state.box_shadow !== '0 0 0 transparent') || this.state.svg_image || this.state.png_image ){
+            let output_style = {
+                display: 'inline-block',
+                position:'relative'
+            };
+            if(!this.state.svg_image && !this.state.png_image && this.state.box_shadow !== '0 0 0 transparent'){
+                output_style.boxShadow = this.state.box_shadow;
+                output_style.width = this.state.default_props.render_pixel_size;
+                output_style.height = this.state.default_props.render_pixel_size;
+                return (<div className="pixels" style={output_style}></div>);
+            } else if(!!this.state.svg_image){
+                return (<div className="svg" style={output_style} dangerouslySetInnerHTML={{__html: this.state.generated_text}}></div>);
+            } else if(!!this.state.png_image){
+                return (<img src={this.state.png} style={output_style} />);
+            }
+        } else {
+            return(
+                <h2>Nothing to see here</h2>
+            )
+        }
+
     }
     render(){
-        const output_text = "";
-        const output_style = {
-            display: 'inline-block',
-            width: this.state.render_pixel_size,
-            height: this.state.render_pixel_size,
-            position:'relative',
-            //margin: (this.min_height?'-' + this.min_height + 'px ' + this.max_width + 'px ' + this.max_height + 'px -' + this.min_width + 'px': '0 0'),
-            boxShadow: this.state.box_shadow
-        };
-
-        const css_setup = {
-            ctx: this.props.canvas_ctx,
-            pixel_size: this.state.render_pixel_size,
-            canvas_width: this.props.defaults.canvas_width,
-            canvas_height: this.props.defaults.canvas_height
-        };
-
         return (
             <div>
-                <button onClick={()=>{this.generateCSSPixelArt(css_setup)}}>Generate CSS</button>
                 <div className="css-preview-block">
-                    <div className="pixels" style={output_style}></div>
+                    {this.renderPreview()}
                 </div>
             </div>
         )
@@ -60,7 +91,8 @@ class PreviewBlock extends Component {
 
 function mapStateToProps(state) {
   return {
-      defaults: state.defaults,
+      default_props: state.defaults,
+      canvas_clear: state.canvas_clear,
       pixel_size: state.pixel_size,
       pixel_color: state.pixel_color,
       canvas_ctx: state.canvas_ctx,
@@ -70,6 +102,6 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch){
-  return bindActionCreators({generateCSSPixelArt:generateCSSPixelArt}, dispatch);
+  return bindActionCreators({clearCanvas}, dispatch);
 }
 export default connect(mapStateToProps,mapDispatchToProps)(PreviewBlock);

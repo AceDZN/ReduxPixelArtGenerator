@@ -1,13 +1,12 @@
 // state arg. is not application state - only state this reducer responsible for.
 export default function(state = null, action){
     switch(action.type){
-        case 'LOAD_UPLOADED_IMAGE':
-            return "Loading";
-        case 'SET_UPLOADED_IMAGE':
+        case 'CANVAS_PROPS_SELECTED':
             return action.payload;
-        case 'RENDER_UPLOADED_IMAGE':
-            return state
-
+        case 'SET_RENDER_PIXELS_DEFAULT':
+            var res = state;
+            res.render_pixel_size = action.payload;
+            return res;
         default:
             return state
     }

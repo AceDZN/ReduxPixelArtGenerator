@@ -12,17 +12,13 @@ class CssCodeBlock extends Component {
     componentWillReceiveProps(props) {
         if(!!props.css_generator){
             this.setState({
-                css_text: props.css_generator.css_pixel_text
+                css_text: props.css_generator.generated_text
             });
         }
     }
 
     render() {
-        return (
-            <div>
-                <textarea id="output" value={this.state.css_text}></textarea>
-            </div>
-        );
+        return (<textarea id="output" value={this.state.css_text}></textarea>);
     }
 }
 

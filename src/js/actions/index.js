@@ -44,18 +44,7 @@ export function setCanvasContext(ctx){
         payload: ctx
     }
 }
-export function generateCSSPixelArt(setup){
-    return {
-        type: 'GENERATE_PIXEL_CSS',
-        payload: setup
-    }
-}
-export function addToShadowArray(setup){
-    return {
-        type: 'ADD_TO_SHADOW_ARRAY',
-        payload: setup
-    }
-}
+
 export function setUploadedImage(image){
     return {
         type: 'SET_UPLOADED_IMAGE',

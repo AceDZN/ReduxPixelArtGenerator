@@ -3,16 +3,22 @@ body {
   font-family: 'Roboto',sans-serif;
   font-weight: 300;
   background: #D9D9D9;
-  position: relative; }
+  position: relative;
+  width: 100%;
+  overflow: hidden; }
   body #app {
-    padding: 100px 0; }
+    padding: 100px 0;
+    width: 100%;
+    overflow: hidden; }
   body .fixed_header {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     background: #083C5D;
-    z-index: 2; }
+    z-index: 3;
+    color: #fff;
+    line-height: 35px; }
 
 h1.greet-message {
   text-align: center;
@@ -36,7 +42,7 @@ ul.list-group {
   right: 0;
   border: 0;
   max-width: 50%;
-  z-index: 3;
+  z-index: 4;
   display: none;
   cursor: pointer; }
   .fork-me img {
@@ -119,16 +125,22 @@ textarea {
     left: 0;
     z-index: 2; }
 
+.container {
+  position: inherit; }
+
 .css-code-block {
   position: absolute;
-  top: 50px;
-  right: 0;
-  width: 500px;
-  height: 500px;
-  transform: translate(100%);
-  transition: transform 1s; }
+  top: 150px;
+  right: -400px;
+  width: 550px;
+  max-width: 100%;
+  height: 250px;
+  transition: right 1s; }
   .css-code-block:hover {
-    transform: translate(50%); }
+    right: 0px; }
+  .css-code-block textarea {
+    width: 100%;
+    height: 100%; }
 
 @media only screen and (min-width: 600px) {
   .fork-me {
