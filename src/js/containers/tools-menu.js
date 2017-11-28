@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import { TwitterPicker } from 'react-color';
-import {setPixelColor, setPixelSize, setCanvasDefaults, clearCanvas,setUploadedImage,loadUploadedImage,setRenderPixelSize} from '../actions/index';
-import {generatePixelArtCss, generatePixelArtSvg, generatePixelArtPng} from '../actions/generate-pixels';
 import {bindActionCreators} from 'redux';
+import {setPixelColor, setPixelSize, setCanvasDefaults, clearCanvas,setUploadedImage,loadUploadedImage,setRenderPixelSize} from '../actions/index';
+import SizePicker from '../components/tools/size-picker';
+import {generatePixelArtCss, generatePixelArtSvg, generatePixelArtPng} from '../actions/generate-pixels';
+
 
 const DEFAULT_PIXEL_SIZE = 10;
 const RENDER_PIXEL_SIZE = 4;
@@ -50,20 +52,7 @@ class CanvasToolsMenu extends Component {
         }
 
     }
-    getBrushesPaginationClassName(c){
-        if(c == this.props.pixel_size){
-            return "page-item active"
-        } else {
-            return "page-item"
-        }
-    }
-    getRenderPaginationClassName(c){
-        if(c == this.props.render_pixel_size){
-            return "page-item active"
-        } else {
-            return "page-item"
-        }
-    }
+
     resetCanvas(){
         this.props.clearCanvas(true);
     }
@@ -77,34 +66,7 @@ class CanvasToolsMenu extends Component {
             this.setState({color_pallete_open: !this.state.color_pallete_open})
         }
     }
-    renderBrushSizePicker(){
-        if(this.props.default_props){
-            let pixel_brushes = [4, 8, 10, 12, 16, 19 ];
-            let brush_elements = pixel_brushes.map(function(brush){
-                return (<li key={"brush_size_"+brush} className={this.getBrushesPaginationClassName(brush)}  onClick={()=>this.props.setPixelSize(brush)}><a className="page-link" href="#" >{brush}</a></li>)
-            }.bind(this));
-            return (
-                <ul className="pagination">
-                    <li className="page-item active "><a className="page-link icon_item" href="#" ><svg dangerouslySetInnerHTML={{__html: this.pixelSizeSVG }} /></a></li>
-                    {brush_elements}
-                </ul>
-            );
-        }
-    }
-    RenderSizePicker(){
-        if(this.props.default_props){
-            let pixel_sizes = [2, 4, 8, 10, 12];
-            let brush_elements = pixel_sizes.map(function(size){
-                return (<li key={"pixel_size_"+size} className={this.getRenderPaginationClassName(size)}  onClick={()=>this.props.setRenderPixelSize(size)}><a className="page-link" href="#" >{size}</a></li>)
-            }.bind(this));
-            return (
-                <ul className="pagination">
-                    <li className="page-item active "><a className="page-link icon_item" href="#" ><svg dangerouslySetInnerHTML={{__html: this.pixelSizeSVG }} /></a></li>
-                    {brush_elements}
-                </ul>
-            );
-        }
-    }
+
     generatePixelArt(type){
         var ctx = this.props.canvas_ctx.canvas;
         const css_setup = {
@@ -131,9 +93,9 @@ class CanvasToolsMenu extends Component {
 
 
 
-        this.pixelSizeSVG = '<use xlink:href="/images/svg/solid.svg#octagon" />';
-        const pixelColorSVG = '<use xlink:href="/images/svg/solid.svg#eye-dropper" />';
-        const clearCanvasSVG = '<use xlink:href="/images/svg/solid.svg#eraser" />';
+        this.pixelSizeSVG = '<use xlink:href="./images/svg/solid.svg#octagon" />';
+        const pixelColorSVG = '<use xlink:href="./images/svg/solid.svg#eye-dropper" />';
+        const clearCanvasSVG = '<use xlink:href="./images/svg/solid.svg#eraser" />';
         let pixel_brushes=[]
 
 
@@ -153,10 +115,23 @@ class CanvasToolsMenu extends Component {
 
                     </li>
                     <li className="pixel_tool">
-                        {this.renderBrushSizePicker()}
+                        <SizePicker
+                            sizelist={[4, 8, 10, 12, 16, 19 ]}
+                            selected={this.props.pixel_size}
+                            key="brush_list"
+                            onClick={this.props.setPixelSize}
+                            icon={this.pixelSizeSVG}
+                             />
                     </li>
-                    <li className="pixel_tool">{this.RenderSizePicker()}</li>
-
+                    <li className="pixel_tool">
+                        <SizePicker
+                            sizelist={[2, 4, 8, 10, 12]}
+                            selected={this.props.render_pixel_size}
+                            key="render_list"
+                            onClick={this.props.setRenderPixelSize}
+                            icon={this.pixelSizeSVG}
+                             />
+                    </li>
                     <li className="pixel_tool">
                         <button className="btn btn-danger" onClick={()=>this.resetCanvas(true)}><svg dangerouslySetInnerHTML={{__html: clearCanvasSVG }} /></button>
                     </li>

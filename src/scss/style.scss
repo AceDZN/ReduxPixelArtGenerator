@@ -7,11 +7,12 @@ body{
     background: #D9D9D9;
     position:relative;
     width: 100%;
-    overflow: hidden;
+    max-width:100%;
+    overflow-x: hidden;
     #app{
         padding: 100px 0;
         width: 100%;
-        overflow: hidden;
+        overflow-x: hidden;
     }
     .fixed_header{
         position: fixed;
@@ -50,6 +51,8 @@ ul.list-group{
   right: 0;
   border: 0;
   max-width: 50%;
+  //width:100px;
+  height:60px;
   z-index:4;
   display:none;
   cursor:pointer;
@@ -124,8 +127,6 @@ ul.list-group{
     }
 }
 .css-preview-block{
-    width: 300px;
-    height: 300px;
     position: relative;
 }
 textarea{

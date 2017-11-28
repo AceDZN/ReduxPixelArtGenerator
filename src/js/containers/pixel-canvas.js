@@ -146,12 +146,10 @@ class PixelCanvas extends Component {
     render(){
         return (
             <div>
-                <h1>Pixel CANVAS</h1>
                 <div className="canvas_wrap">
                     <canvas className="grid_canvas" ref={(c) => this.canvas_grid = c} width={this.props.defaults.canvas_width} height={this.props.defaults.canvas_height} ></canvas>
                     <canvas className="pixel_canvas" ref={(c) => this.canvas = c} width={this.props.defaults.canvas_width} height={this.props.defaults.canvas_height} onMouseDown={this._onMouseDown.bind(this)} ></canvas>
                 </div>
-                <div></div>
             </div>
         )
     }
