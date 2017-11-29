@@ -78,9 +78,20 @@ class PreviewBlock extends Component {
         }
 
     }
+    pixel_array(){
+        if(!this.props.pixel_array || !this.props.pixel_array.length) return;
+        return (
+            <h1>
+                {this.props.pixel_array.length}
+                <br />
+                {this.props.pixel_array[this.props.pixel_array.length-1].size}
+            </h1>
+        )
+    }
     render(){
         return (
             <div>
+                {this.pixel_array()}
                 <div className="css-preview-block">
                     {this.renderPreview()}
                 </div>
@@ -97,7 +108,8 @@ function mapStateToProps(state) {
       pixel_color: state.pixel_color,
       canvas_ctx: state.canvas_ctx,
       css_generator: state.css_generator,
-      uploaded_image: state.uploaded_image
+      uploaded_image: state.uploaded_image,
+      pixel_array: state.pixel_array
   }
 }
 

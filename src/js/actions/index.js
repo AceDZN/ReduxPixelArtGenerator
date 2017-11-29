@@ -12,6 +12,27 @@ export function setPixelSize(pixel_size){
     }
 }
 
+export function populatePixelArray(pixel_array){
+    return {
+        type: 'POPULATE_PIXEL_ARRAY',
+        payload: pixel_array
+    }
+}
+
+export function addPixelToArray(pixel){
+    return {
+        type: 'ADD_PIXEL_TO_ARRAY',
+        payload: pixel
+    }
+}
+
+export function removePixelFromArray(pixel){
+    return {
+        type: 'REMOVE_PIXEL_FROM_ARRAY',
+        payload: pixel
+    }
+}
+
 export function setPixelColor(pixel_color){
     return {
         type: 'PIXEL_COLOR_SELECTED',

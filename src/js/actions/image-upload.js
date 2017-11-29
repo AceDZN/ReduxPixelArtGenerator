@@ -1,4 +1,9 @@
 import loadImage from 'image-promise';
+import {generatePixels} from './generate-pixels';
+
+
+//{ctx:, pixel_size:, canvas_width:,canvas_height:,}
+
 
 
 export function renderUploadedImage(setup){
@@ -9,7 +14,7 @@ export function renderUploadedImage(setup){
     }
 }
 
-function resizeImage(image, canvas, ctx){
+function resizeImage(image, canvas, ctx,pixel_size){
     var imageAspectRatio = image.width / image.height;
     var canvasAspectRatio = canvas.width / canvas.height;
     var renderableHeight, renderableWidth, xStart, yStart;
@@ -39,12 +44,37 @@ function resizeImage(image, canvas, ctx){
         xStart = 0;
         yStart = 0;
     }
-    
+
     canvas.height = renderableHeight;
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(image, 0, 0, renderableWidth, renderableHeight);
+    //{ctx:, pixel_size:, canvas_width:,canvas_height:,}
+    const can      = document.createElement('canvas'), // Not shown on page
+        can_ctx      = can.getContext('2d');
+        can.width  = canvas.width;
+        can.height = canvas.height;
 
-    //ctx.drawImage( image, 0, 0, image.width, image.height );
+    can_ctx.drawImage(image, 0, 0, renderableWidth, renderableHeight);
+
+    //can_ctx.drawImage( image, 0, 0, image.width, image.height );
+
+    const setup = {
+        ctx:can_ctx,
+        pixel_size:pixel_size,
+        canvas_width:renderableWidth,
+        canvas_height:renderableHeight,
+    }
+    const r = generatePixels(setup);
+    if(!!r.pixel_array){
+        const pixel_array = r.pixel_array;
+        for(var i=0; i<pixel_array.length; i++){
+            const p = pixel_array[i];
+            ctx.fillStyle = p.color;
+            ctx.fillRect(p.x, p.y, p.size, p.size );
+
+        }
+
+    }
+    return r;
 }
 
 function renderImage(setup){
@@ -67,7 +97,7 @@ function renderImage(setup){
         image.src = uploaded_image;
 
         return loadImage(image).then(()=>{
-            resizeImage(image, canvas, ctx);
+            return resizeImage(image, canvas, ctx, setup.pixel_size);
         });
 
 

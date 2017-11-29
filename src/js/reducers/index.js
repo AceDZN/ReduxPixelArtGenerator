@@ -8,6 +8,7 @@ import CanvasContextReducer from './reducer-canvas-context';
 import CssGeneratorReducer from './reducer-css-generator';
 import UploadedImageReducer from './reducer-uploaded-image';
 import PixelCanvasReducer from './pixel-canvas-reducer';
+import PixelArrayReducer from './reducer-pixel-array';
 const rootReducer = combineReducers({
     defaults: CanvasSetupReducer,
     pixel_color: PixelColorReducer,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
     css_generator: CssGeneratorReducer,
     uploaded_image: UploadedImageReducer,
     pixel_canvas: PixelCanvasReducer,
+    pixel_array: PixelArrayReducer
 });
 
 export default rootReducer;

@@ -47,7 +47,9 @@
     "watchify": "*"
   },
   "dependencies": {
+    "compass": "^0.1.1",
     "image-promise": "^5.0.1",
+    "lodash": "^4.17.4",
     "react": "^0.14.3",
     "react-color": "^2.13.8",
     "react-dom": "^0.14.3",

@@ -41,9 +41,9 @@ class CanvasToolsMenu extends Component {
         this.props.loadUploadedImage();
         const currentFile = e.target.files[0];
         try{
-            this.resetCanvas(true);
             var reader = new FileReader();
             reader.onload = function(event) {
+                this.resetCanvas(true);
                 this.props.setUploadedImage(event.target.result);
             }.bind(this);
             reader.readAsDataURL(currentFile);
@@ -69,11 +69,13 @@ class CanvasToolsMenu extends Component {
 
     generatePixelArt(type){
         var ctx = this.props.canvas_ctx.canvas;
+        console.log(this.props.pixel_array,"this.props.pixel_array");
         const css_setup = {
             ctx: ctx,
             pixel_size: this.props.render_pixel_size,
             canvas_width: this.props.pixel_canvas.canvas_width,
-            canvas_height: this.props.pixel_canvas.canvas_height
+            canvas_height: this.props.pixel_canvas.canvas_height,
+            pixel_array: this.props.pixel_array
         };
         css_setup.pixel_size = this.props.render_pixel_size;
         if(!type || type== 'css'){
@@ -116,7 +118,7 @@ class CanvasToolsMenu extends Component {
                     </li>
                     <li className="pixel_tool">
                         <SizePicker
-                            sizelist={[4, 8, 10, 12, 16, 19 ]}
+                            sizelist={[2, 4, 8, 10, 12, 15, 16, 19 ]}
                             selected={this.props.pixel_size}
                             key="brush_list"
                             onClick={this.props.setPixelSize}
@@ -160,9 +162,9 @@ function mapStateToProps(state) {
         render_pixel_size: state.render_pixel_size,
         canvas_width: state.canvas_width,
         canvas_height: state.canvas_height,
-        canvas_clear: state.canvas_clear,
         canvas_ctx: state.canvas_ctx,
-        pixel_canvas: state.pixel_canvas
+        pixel_canvas: state.pixel_canvas,
+        pixel_array: state.pixel_array
     }
 }
 

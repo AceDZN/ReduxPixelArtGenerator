@@ -2,11 +2,11 @@
 export default function(state = null, action){
     switch(action.type){
         case 'LOAD_UPLOADED_IMAGE':
-            return "Loading";
+            return {loading: true};
         case 'SET_UPLOADED_IMAGE':
-            return action.payload;
+            return {loading: true, image:action.payload};
         case 'RENDER_UPLOADED_IMAGE':
-            return state
+            return {loading: false, image:state.image};
 
         default:
             return state

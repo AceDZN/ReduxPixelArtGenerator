@@ -33,9 +33,9 @@ export function generatePixelArtPng(setup){
 
 
 
-function generatePixels(setup){
+export function generatePixels(setup){
     if(!setup || !setup.ctx){console.log("can't generatePixels - no canvas context"); return;}
-    let pixels = [];
+    let pixel_array = [];
     const pixel_size = setup.pixel_size;
     //const pixel_color = setup.pixel_color;
 
@@ -59,10 +59,11 @@ function generatePixels(setup){
           if ((i + (pixel_size * 2)) > max_height) {
             max_height = (i + (pixel_size * 2));
           }
-          pixels.push({
+          pixel_array.push({
               x: (j + pixel_size),
               y: (i + pixel_size),
               color: '#' + (data[2] | (data[1] << 8) | (data[0] << 16) | (1 << 24)).toString(16).slice(1),
+              size: pixel_size
           })
         }
       }
@@ -71,7 +72,7 @@ function generatePixels(setup){
     setup.min_width = min_width;
     setup.max_height = max_height;
     setup.max_width = max_width;
-    setup.pixels = pixels;
+    setup.pixel_array = pixel_array;
     return setup;
 }
 
@@ -91,8 +92,8 @@ function generateCSSPixelArt(s){
     if(!s || !s.ctx){console.log("no canvas context"); return;}
     let shadow = [];
     const setup = generatePixels(s);
-    for(var i=0; i<setup.pixels.length; i++){
-        var pixel = setup.pixels[i];
+    for(var i=0; i<setup.pixel_array.length; i++){
+        var pixel = setup.pixel_array[i];
         shadow.push(pixel.x + 'px ' + pixel.y + 'px '+pixel.color);
     }
     const box_shadow = shadow.join(',');
@@ -109,11 +110,21 @@ function generateCSSPixelArt(s){
 function generateSVGPixelArt(s){
     if(!s || !s.ctx){console.log("no canvas context"); return;}
     let svgPixels = [];
-    const setup = generatePixels(s);
-    for(var i=0; i<setup.pixels.length; i++){
-        const pixel = setup.pixels[i];
-        const svg_rect = ('\n\t<rect x="'+pixel.x+'" y="'+pixel.y+'" width="'+setup.pixel_size+'" height="'+setup.pixel_size+'" style="fill:'+pixel.color+'" />');
-        //pixel.x + 'px ' + pixel.y + 'px '+pixel.color
+    let setup = null;
+    if(!!s.pixel_array){
+        setup = s;
+    } else {
+        setup = generatePixels(s);
+    }
+
+    for(var i=0; i<setup.pixel_array.length; i++){
+        const pixel = setup.pixel_array[i];
+        let svg_rect ='';
+        if(!!s.pixel_array){
+            svg_rect = ('\n\t<rect x="'+pixel.x+'" y="'+pixel.y+'" width="'+pixel.size+'" height="'+pixel.size+'" style="fill:'+pixel.color+'" />');
+        } else {
+            svg_rect = ('\n\t<rect x="'+pixel.x+'" y="'+pixel.y+'" width="'+setup.pixel_size+'" height="'+setup.pixel_size+'" style="fill:'+pixel.color+'" />');
+        }
         svgPixels.push(svg_rect);
     }
     const svgPixels_string = svgPixels.join('');
@@ -127,17 +138,27 @@ function generateSVGPixelArt(s){
 function generatePNGPixelArt(s){
     if(!s || !s.ctx){console.log("no canvas context"); return;}
     let svgPixels = [];
-    const setup = generatePixels(s);
-    for(var i=0; i<setup.pixels.length; i++){
-        const pixel = setup.pixels[i];
-        const svg_rect = ('\n\t<rect x="'+pixel.x+'" y="'+pixel.y+'" width="'+setup.pixel_size+'" height="'+setup.pixel_size+'" style="fill:'+pixel.color+'" ></rect>');
+    let setup = null;
+    if(!!s.pixel_array){
+        setup = s;
+    } else {
+        setup = generatePixels(s);
+    }
+
+    for(var i=0; i<setup.pixel_array.length; i++){
+        const pixel = setup.pixel_array[i];
+        let svg_rect ='';
+        if(!!s.pixel_array){
+            svg_rect = ('\n\t<rect x="'+pixel.x+'" y="'+pixel.y+'" width="'+pixel.size+'" height="'+pixel.size+'" style="fill:'+pixel.color+'" />');
+        } else {
+            svg_rect = ('\n\t<rect x="'+pixel.x+'" y="'+pixel.y+'" width="'+setup.pixel_size+'" height="'+setup.pixel_size+'" style="fill:'+pixel.color+'" />');
+        }
         //pixel.x + 'px ' + pixel.y + 'px '+pixel.color
         svgPixels.push(svg_rect);
     }
     const svgPixels_string = svgPixels.join('');
     const svg_base_img = '<svg width="'+setup.canvas_width+'" height="'+setup.canvas_height+'">'+svgPixels_string+'</svg>';
-    var tgtImage = document.querySelector('#png_img'),      // Where to draw the result
-        can      = document.createElement('canvas'), // Not shown on page
+    var can      = document.createElement('canvas'), // Not shown on page
         ctx      = can.getContext('2d'),
         loader   = new Image;                        // Not shown on page
 
