@@ -1,5 +1,5 @@
 import loadImage from 'image-promise';
-
+import { getImageBoundries } from '../utils/';
 
 export function makePixelsArray(setup){
     const data = generatePixels();
@@ -33,18 +33,32 @@ export function generatePixelArtPng(setup){
 
 
 
-export function generatePixels(setup){
+export function generatePixels(setup,visible_bounds=false){
     if(!setup || !setup.ctx){console.log("can't generatePixels - no canvas context"); return;}
     let pixel_array = [];
     const pixel_size = setup.pixel_size;
     //const pixel_color = setup.pixel_color;
+    if(!!visible_bounds){
+        const boundries = getImageBoundries(setup.ctx);
+        setup.boundries = boundries;
 
-    let min_width = setup.canvas_width,
-    min_height = setup.canvas_height,
+            setup.ctx.strokeRect(boundries[0], boundries[1], boundries[2], boundries[3]);
+
+    }
+
+    const x = (setup.boundries?setup.boundries[0]:0);
+    const y = (setup.boundries?setup.boundries[1]:0);
+    const w = (setup.boundries?setup.boundries[2]:setup.canvas_width);
+    const h = (setup.boundries?setup.boundries[3]:setup.canvas_height);
+
+
+
+    let min_width = w,
+    min_height = h,
     max_width = 0,
     max_height = 0;
-    for (var i = 0; i < setup.canvas_height; i += pixel_size) {
-      for (var j = 0; j < setup.canvas_width; j += pixel_size) {
+    for (var i = x; i < (x+w); i += pixel_size) {
+      for (var j = y; j < (y+h); j += pixel_size) {
         var data = setup.ctx.getImageData(j, i, pixel_size, pixel_size).data;
         if (data[0] <= 256 && data[1] <= 256 && data[2] <= 256 && data[3] != 0) {
           if ((j + pixel_size) < min_width) {

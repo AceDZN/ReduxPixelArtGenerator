@@ -90,7 +90,7 @@ gulp.task("sass", function(){
     .pipe(sass().on("error", sass.logError))
     .pipe(concat("style.css"))
     .pipe(gulp.dest("src/css"))
-    .pipe(cssnano())
+    .pipe(cssnano({zindex: false}))
     .pipe(rename({ suffix: ".min" }))
     .pipe(sourcemaps.write("."))
     .pipe(gulp.dest("src/css"));

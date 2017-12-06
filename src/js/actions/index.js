@@ -59,6 +59,13 @@ export function clearCanvas(clear){
         payload: clear
     }
 }
+
+export function setCanvas(canvas_obj){
+    return {
+        type: 'CANVAS_DECLARED',
+        payload: canvas_obj
+    }
+}
 export function setCanvasContext(ctx){
     return {
         type: 'CANVAS_CTX',
@@ -66,12 +73,7 @@ export function setCanvasContext(ctx){
     }
 }
 
-export function setUploadedImage(image){
-    return {
-        type: 'SET_UPLOADED_IMAGE',
-        payload: image
-    }
-}
+
 export function loadUploadedImage(image){
     return {
         type: 'LOAD_UPLOADED_IMAGE',

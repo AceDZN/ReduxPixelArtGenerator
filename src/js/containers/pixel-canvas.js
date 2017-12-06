@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {clearCanvas, setCanvasContext,addPixelToArray,removePixelFromArray} from '../actions/index';
+import {clearCanvas, setCanvas, setCanvasContext,addPixelToArray,removePixelFromArray} from '../actions/index';
 import {renderUploadedImage} from '../actions/image-upload';
 
 class PixelCanvas extends Component {
@@ -13,53 +13,36 @@ class PixelCanvas extends Component {
       };
     }
     componentDidMount() {
+        this.props.setCanvas({canvas:this.canvas,grid:this.canvas_grid});
         this.props.setCanvasContext({canvas:this.canvas.getContext('2d'),grid:this.canvas_grid.getContext('2d')});
         this.resetCanvas();
     }
 
-
     componentWillReceiveProps(nextProps){
-
         if(nextProps.pixel_size!==this.props.pixel_size){
             this.makeGrid(nextProps.pixel_size);
         }
-
-        if(!!nextProps.uploaded_image && !!nextProps.uploaded_image.loading && (nextProps.uploaded_image.loading !== this.state.loading)){
+        if(!!nextProps.uploaded_image && !!nextProps.uploaded_image.loading && !this.state.loading){
             this.setState({loading:true});
         }
-        if(!!nextProps.uploaded_image && nextProps.uploaded_image.loading==false){
+        if(!!nextProps.uploaded_image && !nextProps.uploaded_image.loading && !!this.state.loading){
             this.setState({loading:false});
         }
-        if(!!nextProps.uploaded_image && !!nextProps.uploaded_image.image && ( nextProps.uploaded_image.image !== (this.props.uploaded_image.image?this.props.uploaded_image.image:''))){
-            this.setState({uploaded_image:nextProps.uploaded_image.image,latest_uploaded_image:nextProps.uploaded_image.image})
-            this.resetCanvas('no-grid');
 
-            const set = {
-                canvas: this.canvas,
-                ctx: this.ctx,
-                canvas_width: this.props.defaults.canvas_width,
-                canvas_height: this.props.defaults.canvas_height,
-                uploaded_image: nextProps.uploaded_image.image,
-                pixel_size:this.props.pixel_size
-            };
-            //this.props.clearCanvas(false);
-            this.props.renderUploadedImage(set);
-        //    this.makeGrid(this.props.pixel_size);
-        } else {
-            if(nextProps.canvas_clear!==this.props.canvas_clear){
-                this.resetCanvas(true);
-                this.props.clearCanvas(false);
-            }
+        if(nextProps.canvas_clear!==this.props.canvas_clear){
+            this.resetCanvas(true);
+            this.props.clearCanvas(false);
         }
     }
     resetCanvas(v) {
         if(!this.canvas) return;
         this.ctx = this.canvas.getContext('2d');
         this.grid_ctx = this.canvas_grid.getContext('2d');
-
+        this.props.setCanvas({canvas:this.canvas,grid:this.canvas_grid});
         this.props.setCanvasContext({canvas:this.canvas.getContext('2d'),grid:this.canvas_grid.getContext('2d')});
-        var w = (this.props.defaults ? this.props.defaults.canvas_width : this.canvas.clientWidth);
-        var h = (this.props.defaults ? this.props.defaults.canvas_height : this.canvas.clientHeight);
+
+        var w = (this.props.default_props ? this.props.default_props.canvas_width : this.canvas.clientWidth);
+        var h = (this.props.default_props ? this.props.default_props.canvas_height : this.canvas.clientHeight);
 
         this.grid_ctx.canvas.width  = w; this.grid_ctx.canvas.height = h;
         this.ctx.canvas.width  = w; this.ctx.canvas.height = h;
@@ -76,7 +59,7 @@ class PixelCanvas extends Component {
     makeGrid(size) {
         var w = this.canvas.width,
             h = this.canvas.height;
-        var size = size || this.props.pixel_size ||this.props.defaults.render_pixel_size;
+        var size = size || this.props.pixel_size ||this.props.default_props.render_pixel_size;
         this.grid_ctx.clearRect(0, 0, w, h )
         this.grid_ctx.fillStyle = "#ffffff";
         this.grid_ctx.fillRect(0,0,w,h);
@@ -162,7 +145,7 @@ class PixelCanvas extends Component {
         if (position.y + pixel_size > this.h) {
           cy = this.h - pixel_size;
         }
-        if (e.ctrlKey || e.metaKey) {
+        if (e.ctrlKey || e.metaKey || pixel_color=="transparent") {
           this.drawPixelOnScreen(cx, cy, null, true);
         } else {
           this.drawPixelOnScreen(cx, cy, pixel_color);
@@ -171,8 +154,8 @@ class PixelCanvas extends Component {
     renderLoaderOnCanvas(){
         if(!!this.state.loading){
             const loader_style = {
-                width: ( this.canvas ? this.canvas.width : this.props.defaults.canvas_width),
-                height: ( this.canvas ? this.canvas.height : this.props.defaults.canvas_height),
+                width: ( this.canvas ? this.canvas.width : this.props.default_props.canvas_width),
+                height: ( this.canvas ? this.canvas.height : this.props.default_props.canvas_height),
             }
             return(
                 <div className="loader_wrap" style={loader_style}>
@@ -188,10 +171,10 @@ class PixelCanvas extends Component {
             <div>
                 <div className="canvas_wrap">
                     {this.renderLoaderOnCanvas()}
-                    <canvas className="grid_canvas" ref={(c) => this.canvas_grid = c} width={this.props.defaults.canvas_width} height={this.props.defaults.canvas_height} ></canvas>
+                    <canvas className="grid_canvas" ref={(c) => this.canvas_grid = c} width={this.props.default_props.canvas_width} height={this.props.default_props.canvas_height} ></canvas>
                     <canvas className="pixel_canvas"
                         ref={(c) => this.canvas = c}
-                        width={this.props.defaults.canvas_width} height={this.props.defaults.canvas_height}
+                        width={this.props.default_props.canvas_width} height={this.props.default_props.canvas_height}
                         onMouseDown={this._onMouseDown.bind(this)}
                         onMouseUp={this._onMouseUp.bind(this)}
                         onMouseMove={this._onMouseMove.bind(this)}
@@ -206,7 +189,7 @@ class PixelCanvas extends Component {
 
 function mapStateToProps(state) {
   return {
-      defaults: state.defaults,
+      default_props: state.default_props,
       pixel_size: state.pixel_size,
       pixel_color: state.pixel_color,
       canvas_clear: state.canvas_clear,
@@ -216,6 +199,13 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch){
-  return bindActionCreators({clearCanvas,setCanvasContext,renderUploadedImage,addPixelToArray,removePixelFromArray}, dispatch);
+  return bindActionCreators({
+      clearCanvas,
+      setCanvas,
+      setCanvasContext,
+      renderUploadedImage,
+      addPixelToArray,
+      removePixelFromArray
+  }, dispatch);
 }
 export default connect(mapStateToProps,mapDispatchToProps)(PixelCanvas);

@@ -89,10 +89,11 @@ class PreviewBlock extends Component {
         )
     }
     render(){
+        const previewStyle = {height: this.props.default_props.canvas_height};
         return (
             <div>
                 {this.pixel_array()}
-                <div className="css-preview-block">
+                <div className="css-preview-block" style={previewStyle}>
                     {this.renderPreview()}
                 </div>
             </div>
@@ -102,7 +103,7 @@ class PreviewBlock extends Component {
 
 function mapStateToProps(state) {
   return {
-      default_props: state.defaults,
+      default_props: state.default_props,
       canvas_clear: state.canvas_clear,
       pixel_size: state.pixel_size,
       pixel_color: state.pixel_color,

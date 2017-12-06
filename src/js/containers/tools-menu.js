@@ -1,75 +1,88 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import { TwitterPicker } from 'react-color';
 import {bindActionCreators} from 'redux';
-import {setPixelColor, setPixelSize, setCanvasDefaults, clearCanvas,setUploadedImage,loadUploadedImage,setRenderPixelSize} from '../actions/index';
+
+//Components
 import SizePicker from '../components/tools/size-picker';
+import ColorPicker from '../components/tools/color-picker';
+import {setUploadedImage} from '../actions/image-upload';
+//Actions
+import {setPixelColor, setPixelSize, setCanvasDefaults, clearCanvas,loadUploadedImage,setRenderPixelSize} from '../actions/index';
 import {generatePixelArtCss, generatePixelArtSvg, generatePixelArtPng} from '../actions/generate-pixels';
+import {setMainColorScheme} from '../actions/colors';
+
+import { getScreenDimensions } from '../utils/';
 
 
 const DEFAULT_PIXEL_SIZE = 10;
 const RENDER_PIXEL_SIZE = 4;
-const DEFAULT_CANVAS_WIDTH = 480 || 480 ||512 || (RENDER_PIXEL_SIZE*30);
-const DEFAULT_CANVAS_HEIGHT = 480 || 480 ||512 || (RENDER_PIXEL_SIZE*30);
+const DEFAULT_CANVAS_WIDTH = getScreenDimensions()[0] || (RENDER_PIXEL_SIZE*30);
+const DEFAULT_CANVAS_HEIGHT = (getScreenDimensions()[1]-60) || (RENDER_PIXEL_SIZE*30);
 
 
 class CanvasToolsMenu extends Component {
     constructor(props) {
       super(props);
       this.state = {
-          default_props: {render_pixel_size: RENDER_PIXEL_SIZE, pixel_color: "#000000", pixel_size: DEFAULT_PIXEL_SIZE, canvas_width: DEFAULT_CANVAS_WIDTH, canvas_height: DEFAULT_CANVAS_HEIGHT},
-          color_pallete_open: false,
-          image_source: "BLA?"
-
+          default_props: {render_pixel_size: RENDER_PIXEL_SIZE, pixel_color: "#212121", pixel_size: DEFAULT_PIXEL_SIZE, canvas_width: DEFAULT_CANVAS_WIDTH, canvas_height: DEFAULT_CANVAS_HEIGHT}
       };
     }
-
+    componentWillReceiveProps(nextProps){
+        //console.log("componentWillReceiveProps",nextProps)
+    }
     componentWillMount() {
+        this.props.setMainColorScheme();
         this.props.setPixelColor(this.state.default_props.pixel_color);
         this.props.setPixelSize(this.state.default_props.pixel_size);
         this.props.setCanvasDefaults(this.state.default_props);
+
     }
 
     onColorInputChange(c){
         if(!c || !c.hex) return
         this.props.setPixelColor(c.hex);
-        this.setState({color_pallete_open: false});
-        this.closePallete();
+    }
+
+    selectEraser(){
+        this.props.setPixelColor('transparent');
     }
     onFilePreview(e){
         if(!e || !e.target || !e.target.files || e.target.files.length<1){return;}
+
         this.props.loadUploadedImage();
         const currentFile = e.target.files[0];
         try{
             var reader = new FileReader();
             reader.onload = function(event) {
                 this.resetCanvas(true);
-                this.props.setUploadedImage(event.target.result);
+                this.props.clearCanvas(false);
+
+                const set = {
+                    canvas: this.props.canvas_obj.canvas,
+                    ctx: this.props.canvas_ctx.canvas,
+                    canvas_width: this.props.default_props.canvas_width,
+                    canvas_height: this.props.default_props.canvas_height,
+                    pixel_size:this.props.pixel_size,
+                    uploaded_image: event.target.result
+                };
+                this.props.setUploadedImage(set);
             }.bind(this);
             reader.readAsDataURL(currentFile);
         } catch(err){
             console.warn(err,"err");
         }
-
+        e.target.value = "";
     }
 
-    resetCanvas(){
-        this.props.clearCanvas(true);
+    resetCanvas(t){
+        this.props.clearCanvas(t);
+        this.props.setMainColorScheme();
     }
-    openPallete(){
-        if(!this.state.color_pallete_open){
-            this.setState({color_pallete_open: !this.state.color_pallete_open})
-        }
-    }
-    closePallete(){
-        if(!!this.state.color_pallete_open){
-            this.setState({color_pallete_open: !this.state.color_pallete_open})
-        }
-    }
+
 
     generatePixelArt(type){
         var ctx = this.props.canvas_ctx.canvas;
-        console.log(this.props.pixel_array,"this.props.pixel_array");
+        //console.log(this.props.pixel_array,"this.props.pixel_array");
         const css_setup = {
             ctx: ctx,
             pixel_size: this.props.render_pixel_size,
@@ -89,32 +102,19 @@ class CanvasToolsMenu extends Component {
     }
 
     render(){
-        const colorStyle = {
-          backgroundColor: this.props.pixel_color,
-        };
-
-
-
         this.pixelSizeSVG = '<use xlink:href="./images/svg/solid.svg#octagon" />';
-        const pixelColorSVG = '<use xlink:href="./images/svg/solid.svg#eye-dropper" />';
         const clearCanvasSVG = '<use xlink:href="./images/svg/solid.svg#eraser" />';
-        let pixel_brushes=[]
 
-
-
+        let pixel_brushes=[];
         return (
             <nav className="fixed_header">
                 <ul className="pixel_tools_menu">
                     <li className="pixel_tool">
-                        <div className="color_swatch" onClick={this.openPallete.bind(this)} style={colorStyle}>
-                            <svg dangerouslySetInnerHTML={{__html: pixelColorSVG }} />
-                            <TwitterPicker
-                                className={(!!this.state.color_pallete_open?'open':'closed')}
-                                color={ this.props.pixel_color || this.state.default_props.pixel_color }
-                                onChangeComplete={ (e)=>this.onColorInputChange(e) }
-                            />
-                        </div>
-
+                        <ColorPicker
+                            color_schemes={ this.props.color_schemes }
+                            selected={ this.props.pixel_color || this.state.default_props.pixel_color }
+                            onChangeComplete={ (e)=>this.onColorInputChange(e) }
+                        />
                     </li>
                     <li className="pixel_tool">
                         <SizePicker
@@ -156,15 +156,18 @@ class CanvasToolsMenu extends Component {
 
 function mapStateToProps(state) {
     return {
-        default_props: state.defaults,
+        default_props: state.default_props,
         pixel_color: state.pixel_color,
         pixel_size: state.pixel_size,
         render_pixel_size: state.render_pixel_size,
         canvas_width: state.canvas_width,
         canvas_height: state.canvas_height,
+        canvas_obj: state.canvas_obj,
         canvas_ctx: state.canvas_ctx,
         pixel_canvas: state.pixel_canvas,
-        pixel_array: state.pixel_array
+        pixel_array: state.pixel_array,
+        color_schemes: state.color_schemes
+
     }
 }
 
@@ -178,6 +181,7 @@ function mapDispatchToProps(dispatch){
       loadUploadedImage,
       setRenderPixelSize,
       generatePixelArtCss, generatePixelArtSvg, generatePixelArtPng,
+      setMainColorScheme,
   }, dispatch);
 }
 export default connect(mapStateToProps,mapDispatchToProps)(CanvasToolsMenu);

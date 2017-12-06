@@ -11,17 +11,20 @@ export default class App extends Component {
             <div>
                 <ForkBanner url="https://github.com/AceDZN/ReduxGulpStarterKit" />
                 <CanvasToolsMenu />
+                <div className="css-code-block">
+                    <CssCodeBlock />
+                </div>
+
+                <PixelCanvas/>
                 <div className="container">
                     <div className="row">
                         <div className="col">
-                            <PixelCanvas/>
+
                         </div>
                         <div className="col">
                             <PreviewBlock />
                         </div>
-                        <div className="css-code-block">
-                            <CssCodeBlock />
-                        </div>
+
                     </div>
                 </div>
             </div>
