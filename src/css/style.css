@@ -66,6 +66,8 @@ ul.list-group {
     display: inline-block;
     height: 60px;
     vertical-align: middle; }
+    .pixel_tools_menu .pixel_tool.size-picker-wrap {
+      width: 100px; }
     .pixel_tools_menu .pixel_tool .page-link.icon_item {
       padding-top: 0;
       padding-bottom: 0;
@@ -164,6 +166,16 @@ ul.list-group {
           display: block;
           line-height: 1.5;
           padding: 5px; }
+    .pixel_tools_menu .pixel_tool .rangeslider-horizontal .rangeslider__handle-tooltip {
+      top: 37px !important; }
+    .pixel_tools_menu .pixel_tool .rangeslider-horizontal .rangeslider__handle-tooltip:after {
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 8px solid rgba(0, 0, 0, 0.8) !important;
+      border-top: 0px solid transparent !important;
+      left: 50%;
+      top: -8px !important;
+      bottom: auto !important; }
 
 .css-preview-block {
   position: relative; }
@@ -295,3 +307,9 @@ textarea {
     box-shadow: 20px 10px rgba(255, 255, 255, 0), 40px 10px rgba(255, 255, 255, 0), 0 -10px rgba(255, 255, 255, 0), 20px -10px rgba(255, 255, 255, 0), 40px -10px rgba(255, 255, 255, 0), 0 -30px rgba(255, 255, 255, 0), 20px -30px rgba(255, 255, 255, 0), 40px -40px #f2cd7b; }
   95%, 100% {
     box-shadow: 20px 10px rgba(255, 255, 255, 0), 40px 10px rgba(255, 255, 255, 0), 0 -10px rgba(255, 255, 255, 0), 20px -10px rgba(255, 255, 255, 0), 40px -10px rgba(255, 255, 255, 0), 0 -30px rgba(255, 255, 255, 0), 20px -30px rgba(255, 255, 255, 0), 40px -30px rgba(242, 205, 123, 0); } }
+
+/* Add image to the DOM here so user can't see it */
+#measure {
+  position: absolute;
+  left: -10000px;
+  top: -100000px; }

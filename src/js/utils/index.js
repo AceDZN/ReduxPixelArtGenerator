@@ -62,5 +62,6 @@ export function getImageBoundries(ctx){
             }
         }
     }
-    return [x1, y1, x2-x1, y2-y1]
+
+    return [x1, y1, (x1==0?10:x2-x1), y2-y1]
 }

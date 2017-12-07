@@ -1,4 +1,7 @@
-import React,{ Component } from 'react';
+import React, { Component } from 'react';
+import Slider from 'react-rangeslider';
+
+
 export default class SizePicker extends Component {
     constructor(props) {
       super(props);
@@ -6,6 +9,7 @@ export default class SizePicker extends Component {
           selected_size: this.props.selected,
           key_prefix: this.props.key
       };
+      this.handleButtonClick = this.handleButtonClick.bind(this);
     }
     componentWillReceiveProps(nextProps){
         if(!!nextProps.selected && nextProps.selected !== this.props.selected){
@@ -30,10 +34,16 @@ export default class SizePicker extends Component {
                 return (<li key={this.state.key+'_'+size} className={this.getPaginationClassName(size)}  onClick={()=>this.handleButtonClick(size)}><a className="page-link" href="#" >{size}</a></li>)
             }.bind(this));
             return (
-                <ul className="pagination">
-                    <li className="page-item active "><a className="page-link icon_item" href="#" ><svg dangerouslySetInnerHTML={{__html: this.props.icon }} /></a></li>
-                    {size_elements}
-                </ul>
+                <div>
+                <Slider
+                    step={1}
+                    min={2}
+                    max={20}
+                    value={this.state.selected_size}
+                    onChange={this.handleButtonClick}
+                  />
+
+                </div>
             );
         }
     }
@@ -45,3 +55,12 @@ export default class SizePicker extends Component {
         );
     }
 }
+
+
+
+                    /*
+                    <ul className="pagination">
+                        <li className="page-item active "><a className="page-link icon_item" href="#" ><svg dangerouslySetInnerHTML={{__html: this.props.icon }} /></a></li>
+                        {size_elements}
+                    </ul>
+                    */

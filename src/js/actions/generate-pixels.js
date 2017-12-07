@@ -31,35 +31,25 @@ export function generatePixelArtPng(setup){
     }
 }
 
-
-
-export function generatePixels(setup,visible_bounds=false){
+export function generatePixels(setup){
     if(!setup || !setup.ctx){console.log("can't generatePixels - no canvas context"); return;}
+
     let pixel_array = [];
     const pixel_size = setup.pixel_size;
-    //const pixel_color = setup.pixel_color;
-    if(!!visible_bounds){
-        const boundries = getImageBoundries(setup.ctx);
-        setup.boundries = boundries;
-
-            setup.ctx.strokeRect(boundries[0], boundries[1], boundries[2], boundries[3]);
-
-    }
-
-    const x = (setup.boundries?setup.boundries[0]:0);
-    const y = (setup.boundries?setup.boundries[1]:0);
-    const w = (setup.boundries?setup.boundries[2]:setup.canvas_width);
-    const h = (setup.boundries?setup.boundries[3]:setup.canvas_height);
-
-
+    const x = 0;
+    const y = 0;
+    const w = setup.ctx.canvas.width;
+    const h = setup.ctx.canvas.height;
 
     let min_width = w,
     min_height = h,
     max_width = 0,
     max_height = 0;
-    for (var i = x; i < (x+w); i += pixel_size) {
-      for (var j = y; j < (y+h); j += pixel_size) {
+
+    for (var j = x; j < (x+w); j += pixel_size) {
+          for (var i = y; i < (y+h); i += pixel_size) {
         var data = setup.ctx.getImageData(j, i, pixel_size, pixel_size).data;
+
         if (data[0] <= 256 && data[1] <= 256 && data[2] <= 256 && data[3] != 0) {
           if ((j + pixel_size) < min_width) {
             min_width = (j + pixel_size);
@@ -73,12 +63,16 @@ export function generatePixels(setup,visible_bounds=false){
           if ((i + (pixel_size * 2)) > max_height) {
             max_height = (i + (pixel_size * 2));
           }
-          pixel_array.push({
+
+
+          const p = {
               x: (j + pixel_size),
               y: (i + pixel_size),
               color: '#' + (data[2] | (data[1] << 8) | (data[0] << 16) | (1 << 24)).toString(16).slice(1),
               size: pixel_size
-          })
+          };
+          pixel_array.push(p);
+
         }
       }
     }
@@ -121,6 +115,7 @@ function generateCSSPixelArt(s){
     return result;
 }
 
+
 function generateSVGPixelArt(s){
     if(!s || !s.ctx){console.log("no canvas context"); return;}
     let svgPixels = [];
@@ -131,53 +126,49 @@ function generateSVGPixelArt(s){
         setup = generatePixels(s);
     }
 
+
+// GET FILLED IN BOUNDRIES FOR FINAL SVG
+    const boundries = getImageBoundries(setup.ctx);
+    setup.boundries = {x: boundries[0], y: boundries[1], w: boundries[2], h: boundries[3]};
+    let x = (setup.boundries?setup.boundries.x:0);
+    let y = (setup.boundries?setup.boundries.y:0);
+    let w = (setup.boundries?setup.boundries.w:setup.canvas_width);
+    let h = (setup.boundries?setup.boundries.h:setup.canvas_height);
+
     for(var i=0; i<setup.pixel_array.length; i++){
         const pixel = setup.pixel_array[i];
         let svg_rect ='';
         if(!!s.pixel_array){
-            svg_rect = ('\n\t<rect x="'+pixel.x+'" y="'+pixel.y+'" width="'+pixel.size+'" height="'+pixel.size+'" style="fill:'+pixel.color+'" />');
+            svg_rect = ('\n\t<rect x="'+(pixel.x-x)+'" y="'+(pixel.y-y)+'" width="'+pixel.size+'" height="'+pixel.size+'" style="fill:'+pixel.color+'" />');
         } else {
-            svg_rect = ('\n\t<rect x="'+pixel.x+'" y="'+pixel.y+'" width="'+setup.pixel_size+'" height="'+setup.pixel_size+'" style="fill:'+pixel.color+'" />');
+            svg_rect = ('\n\t<rect x="'+(pixel.x-x)+'" y="'+(pixel.y-y)+'" width="'+setup.pixel_size+'" height="'+setup.pixel_size+'" style="fill:'+pixel.color+'" />');
         }
         svgPixels.push(svg_rect);
     }
     const svgPixels_string = svgPixels.join('');
     const result = {
         type: 'svg',
-        generated_text : '<svg width="'+setup.canvas_width+'" height="'+setup.canvas_height+'">'+svgPixels_string+'</svg>',
+        boundries: setup.boundries,
+        generated_text : '<svg width="'+w+'" height="'+h+'"  viewBox="0 0 '+w+' '+h+'">'+svgPixels_string+'</svg>',
     }
     return result;
 }
 
 function generatePNGPixelArt(s){
-    if(!s || !s.ctx){console.log("no canvas context"); return;}
-    let svgPixels = [];
+    const pixel_art = generateSVGPixelArt(s);
+    const svg_base_img = pixel_art.generated_text;
     let setup = null;
     if(!!s.pixel_array){
         setup = s;
     } else {
         setup = generatePixels(s);
     }
-
-    for(var i=0; i<setup.pixel_array.length; i++){
-        const pixel = setup.pixel_array[i];
-        let svg_rect ='';
-        if(!!s.pixel_array){
-            svg_rect = ('\n\t<rect x="'+pixel.x+'" y="'+pixel.y+'" width="'+pixel.size+'" height="'+pixel.size+'" style="fill:'+pixel.color+'" />');
-        } else {
-            svg_rect = ('\n\t<rect x="'+pixel.x+'" y="'+pixel.y+'" width="'+setup.pixel_size+'" height="'+setup.pixel_size+'" style="fill:'+pixel.color+'" />');
-        }
-        //pixel.x + 'px ' + pixel.y + 'px '+pixel.color
-        svgPixels.push(svg_rect);
-    }
-    const svgPixels_string = svgPixels.join('');
-    const svg_base_img = '<svg width="'+setup.canvas_width+'" height="'+setup.canvas_height+'">'+svgPixels_string+'</svg>';
     var can      = document.createElement('canvas'), // Not shown on page
         ctx      = can.getContext('2d'),
         loader   = new Image;                        // Not shown on page
 
-    loader.width  = can.width  = setup.canvas_width;
-    loader.height = can.height = setup.canvas_height;
+    loader.width  = can.width  = pixel_art.boundries.w;
+    loader.height = can.height = pixel_art.boundries.h;
 
     var tmp = document.createElement("div");
     tmp.innerHTML = svg_base_img;
@@ -191,7 +182,7 @@ function generatePNGPixelArt(s){
         setup.png_to_url = can.toDataURL();
         result = {
             type: 'png',
-            generated_text : '<img width="'+setup.canvas_width+'" height="'+setup.canvas_height+'" src="'+setup.png_to_url+'" />',
+            generated_text : '<img width="'+pixel_art.boundries.w+'" height="'+pixel_art.boundries.h+'" src="'+setup.png_to_url+'" />',
             png_image: setup.png_to_url
         }
         return result;

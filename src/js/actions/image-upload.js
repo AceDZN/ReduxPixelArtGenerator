@@ -67,7 +67,7 @@ function resizeImage(setup,image,dispatch){
         can.width  = setup.canvas.width;
         can.height = setup.canvas.height;
 
-    setup.canvas.height = renderableHeight;
+    //setup.canvas.height = renderableHeight;
     setup.ctx.imageSmoothingEnabled = false;
 
     can_ctx.drawImage(image, 0, 0, renderableWidth, renderableHeight);
@@ -75,11 +75,13 @@ function resizeImage(setup,image,dispatch){
     //can_ctx.drawImage( image, 0, 0, image.width, image.height );
 
     const temp_set = {
-        ctx:can_ctx,
+        can: can,
+        ctx: can_ctx,
         pixel_size:setup.pixel_size,
         canvas_width:renderableWidth,
         canvas_height:renderableHeight,
     }
+    //setup.ctx.drawImage(image, 0, 0, renderableWidth, renderableHeight);
     const r = generatePixels(temp_set);
     if(!!r.pixel_array){
         const pixel_array = r.pixel_array;

@@ -57,12 +57,45 @@ class PixelCanvas extends Component {
         });
     }
     makeGrid(size) {
-        var w = this.canvas.width,
-            h = this.canvas.height;
+        var w = this.grid_ctx.canvas.width,
+            h = this.grid_ctx.canvas.height;
         var size = size || this.props.pixel_size ||this.props.default_props.render_pixel_size;
-        this.grid_ctx.clearRect(0, 0, w, h )
-        this.grid_ctx.fillStyle = "#ffffff";
-        this.grid_ctx.fillRect(0,0,w,h);
+
+        var pixels = [];
+
+        this.grid_ctx.clearRect(0, 0, w, h );
+
+        // Draw a checker board
+        let lastNum = 0;
+        for (let i = 0; i< w*6; (i=i+size)){
+          pixels.push(lastNum);
+          lastNum = (lastNum == 0 ? 1 : 0);
+        }
+        for (var row = 0; row < w; row++) {
+            for (var col = 0; col < h; col++) {
+                var i = 5 * row + col;
+                if (pixels[i] == 1) {
+                    /*
+                  this.grid_ctx.beginPath();
+                  this.grid_ctx.rect(col * size, row * size, size, size);
+
+                  this.grid_ctx.fill();
+                  this.grid_ctx.closePath;
+                  */
+                  this.grid_ctx.fillStyle = "#f1f4f5";
+                  this.grid_ctx.fillRect(col * size, row * size, size, size);
+                }
+          }
+        }
+        console.log((w/size),"this.canvas.width");
+        console.log( (h/size),"this.canvas.height");
+
+
+
+
+
+        //
+        /*
         var odd=false;
         for(var i = 0; i<w;  i+=size){
             odd = !odd;
@@ -72,6 +105,7 @@ class PixelCanvas extends Component {
                 this.grid_ctx.fillRect(i, j, size, size);
             }
         }
+        */
     }
     getPosition(e) {
         var targ;

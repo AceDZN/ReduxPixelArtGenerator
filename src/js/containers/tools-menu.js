@@ -116,7 +116,7 @@ class CanvasToolsMenu extends Component {
                             onChangeComplete={ (e)=>this.onColorInputChange(e) }
                         />
                     </li>
-                    <li className="pixel_tool">
+                    <li className="pixel_tool size-picker-wrap">
                         <SizePicker
                             sizelist={[2, 4, 8, 10, 12, 15, 16, 19 ]}
                             selected={this.props.pixel_size}
@@ -125,7 +125,7 @@ class CanvasToolsMenu extends Component {
                             icon={this.pixelSizeSVG}
                              />
                     </li>
-                    <li className="pixel_tool">
+                    <li className="pixel_tool size-picker-wrap">
                         <SizePicker
                             sizelist={[2, 4, 8, 10, 12]}
                             selected={this.props.render_pixel_size}

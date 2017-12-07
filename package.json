@@ -53,6 +53,7 @@
     "react": "^0.14.3",
     "react-color": "^2.13.8",
     "react-dom": "^0.14.3",
+    "react-rangeslider": "^2.2.0",
     "react-redux": "^4.0.0",
     "redux": "^3.0.4",
     "redux-promise": "^0.5.3",
