@@ -128,7 +128,6 @@ class PixelCanvas extends Component {
 
         return { "x": x, "y": y };
     };
-
     drawPixelOnScreen(x, y, color, clear) {
         if (!clear || clear == null) clear = false;
         const pixel = {
@@ -180,9 +179,9 @@ class PixelCanvas extends Component {
           cy = this.h - pixel_size;
         }
         if (e.ctrlKey || e.metaKey || pixel_color=="transparent") {
-          this.drawPixelOnScreen(cx, cy, null, true);
+            this.drawPixelOnScreen(cx, cy, null, true);
         } else {
-          this.drawPixelOnScreen(cx, cy, pixel_color);
+            this.drawPixelOnScreen(cx, cy, pixel_color);
         }
     }
     renderLoaderOnCanvas(){

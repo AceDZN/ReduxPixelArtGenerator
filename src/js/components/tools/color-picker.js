@@ -11,10 +11,15 @@ export default class ColorPicker extends Component {
         //console.log("props:",nextProps)
     }
     handleColorSelect(c){
+
+        let tempState = {color_pallete_open: false};
+        if(c.hex == 'transparent'){
+            tempState.latest_color = this.props.selected;
+        }
+        this.setState(tempState);
         if(this.props.onChangeComplete){
             this.props.onChangeComplete(c);
         }
-        this.setState({color_pallete_open: false});
     }
     getSelectedColorClassName(c){
         var class_name= ''
@@ -82,7 +87,12 @@ export default class ColorPicker extends Component {
     }
     handleColorSwatchClick(){
         const o = !this.state.color_pallete_open;
-        this.setState({color_pallete_open: o});
+        console.log(this.props.selected);
+        let newState ={color_pallete_open: o};
+        if(this.props.selected == 'transparent'){
+            this.handleColorSelect(this.state.latest_color);
+        }
+        this.setState(newState);
     }
 
     render() {
@@ -91,7 +101,7 @@ export default class ColorPicker extends Component {
         const pixelColorSVGstyle = {fill: (this.props.selected=='transparent' ? 'eraser' : getCorrectTextColor(this.props.selected))};
 
         const colorStyle = {
-            backgroundColor: (this.props.selected=='transparent' ? 'eraser' : this.props.selected),
+            backgroundColor: (this.props.selected=='transparent' ? this.state.latest_color : this.props.selected),
             boxShadow: (this.props.selected=='transparent' ? 'none' : '#ffffff 0px 0px 0px 5px inset')
         };
         const eraserStyle = {boxShadow: (this.props.selected=='transparent' ? 'rgb(255, 11, 11) 0px 0px 0px 5px inset' : 'none')};

@@ -75,7 +75,6 @@ function resizeImage(setup,image,dispatch){
     //can_ctx.drawImage( image, 0, 0, image.width, image.height );
 
     const temp_set = {
-        can: can,
         ctx: can_ctx,
         pixel_size:setup.pixel_size,
         canvas_width:renderableWidth,
@@ -85,11 +84,10 @@ function resizeImage(setup,image,dispatch){
     const r = generatePixels(temp_set);
     if(!!r.pixel_array){
         const pixel_array = r.pixel_array;
-        for(var i=0; i<pixel_array.length; i++){
-            const p = pixel_array[i];
+        for(let k in pixel_array){
+            const p = pixel_array[k];
             setup.ctx.fillStyle = p.color;
             setup.ctx.fillRect(p.x, p.y, p.size, p.size );
-
         }
 
     }

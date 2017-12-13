@@ -110,6 +110,12 @@ class CanvasToolsMenu extends Component {
             <nav className="fixed_header">
                 <ul className="pixel_tools_menu">
                     <li className="pixel_tool">
+                        <button className="btn btn-danger" onClick={()=>this.resetCanvas(true)}><svg dangerouslySetInnerHTML={{__html: clearCanvasSVG }} /></button>
+                    </li>
+                    <li className="pixel_tool"></li>
+                    <li className="pixel_tool"></li>
+
+                    <li className="pixel_tool">
                         <ColorPicker
                             color_schemes={ this.props.color_schemes }
                             selected={ this.props.pixel_color || this.state.default_props.pixel_color }
@@ -134,9 +140,7 @@ class CanvasToolsMenu extends Component {
                             icon={this.pixelSizeSVG}
                              />
                     </li>
-                    <li className="pixel_tool">
-                        <button className="btn btn-danger" onClick={()=>this.resetCanvas(true)}><svg dangerouslySetInnerHTML={{__html: clearCanvasSVG }} /></button>
-                    </li>
+
                     <li className="pixel_tool hidden-md-down">
                         <input type="file" onChange={(e)=>this.onFilePreview(e)} />
                     </li>

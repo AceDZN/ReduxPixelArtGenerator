@@ -28,16 +28,12 @@ export default class SizePicker extends Component {
         }
     }
     renderBrushSizePicker(){
-        if(this.props.sizelist){
-            let size_list = this.props.sizelist;
-            let size_elements = size_list.map(function(size){
-                return (<li key={this.state.key+'_'+size} className={this.getPaginationClassName(size)}  onClick={()=>this.handleButtonClick(size)}><a className="page-link" href="#" >{size}</a></li>)
-            }.bind(this));
+        if(this.props.selected){
             return (
                 <div>
                 <Slider
-                    step={1}
-                    min={2}
+                    step={2}
+                    min={4}
                     max={20}
                     value={this.state.selected_size}
                     onChange={this.handleButtonClick}
