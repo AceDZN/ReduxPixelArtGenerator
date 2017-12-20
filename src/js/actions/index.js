@@ -80,3 +80,10 @@ export function loadUploadedImage(image){
         payload: image
     }
 }
+
+export function selectTool(tool){
+    return {
+        type: 'TOOL_SELECTED',
+        payload: tool
+    }
+}

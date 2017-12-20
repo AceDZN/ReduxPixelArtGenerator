@@ -1,30 +1,36 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 //Components
-import SizePicker from '../components/tools/size-picker';
-import ColorPicker from '../components/tools/color-picker';
-import {setUploadedImage} from '../actions/image-upload';
+import { SizePicker } from '../components/tools/size-picker';
+import { ColorPicker } from '../components/tools/color-picker';
+import { ToolButton } from '../components/tools/tool-button';
+import { displayPreviewPopup } from '../actions/preview-popup';
 //Actions
-import {setPixelColor, setPixelSize, setCanvasDefaults, clearCanvas,loadUploadedImage,setRenderPixelSize} from '../actions/index';
-import {generatePixelArtCss, generatePixelArtSvg, generatePixelArtPng} from '../actions/generate-pixels';
-import {setMainColorScheme} from '../actions/colors';
+import { setPixelColor, setPixelSize, setCanvasDefaults, clearCanvas,loadUploadedImage,setRenderPixelSize, selectTool } from '../actions/index';
+import { generatePixelArtCss, generatePixelArtSvg, generatePixelArtPng } from '../actions/generate-pixels';
+import { setMainColorScheme } from '../actions/colors';
 
 import { getScreenDimensions } from '../utils/';
 
 
+
+const PAINTBRUSH = "paintbrush";
+const ERASER = "eraser";
+const UPLOAD = "upload";
+const SAVE = "save";
 const DEFAULT_PIXEL_SIZE = 10;
 const RENDER_PIXEL_SIZE = 4;
 const DEFAULT_CANVAS_WIDTH = getScreenDimensions()[0] || (RENDER_PIXEL_SIZE*30);
-const DEFAULT_CANVAS_HEIGHT = (getScreenDimensions()[1]-60) || (RENDER_PIXEL_SIZE*30);
+const DEFAULT_CANVAS_HEIGHT = (getScreenDimensions()[1]) || (RENDER_PIXEL_SIZE*30);
 
 
-class CanvasToolsMenu extends Component {
+export class CanvasToolsMenu extends Component {
     constructor(props) {
       super(props);
       this.state = {
-          default_props: {render_pixel_size: RENDER_PIXEL_SIZE, pixel_color: "#212121", pixel_size: DEFAULT_PIXEL_SIZE, canvas_width: DEFAULT_CANVAS_WIDTH, canvas_height: DEFAULT_CANVAS_HEIGHT}
+          default_props: {render_pixel_size: RENDER_PIXEL_SIZE, pixel_color: "#212121", pixel_size: DEFAULT_PIXEL_SIZE, canvas_width: DEFAULT_CANVAS_WIDTH, canvas_height: DEFAULT_CANVAS_HEIGHT},
       };
     }
     componentWillReceiveProps(nextProps){
@@ -35,17 +41,16 @@ class CanvasToolsMenu extends Component {
         this.props.setPixelColor(this.state.default_props.pixel_color);
         this.props.setPixelSize(this.state.default_props.pixel_size);
         this.props.setCanvasDefaults(this.state.default_props);
-
+        this.props.selectTool(PAINTBRUSH);
     }
 
     onColorInputChange(c){
         if(!c || !c.hex) return
+
         this.props.setPixelColor(c.hex);
     }
 
-    selectEraser(){
-        this.props.setPixelColor('transparent');
-    }
+
     onFilePreview(e){
         if(!e || !e.target || !e.target.files || e.target.files.length<1){return;}
 
@@ -81,6 +86,7 @@ class CanvasToolsMenu extends Component {
 
 
     generatePixelArt(type){
+        this.props.displayPreviewPopup(true);
         var ctx = this.props.canvas_ctx.canvas;
         //console.log(this.props.pixel_array,"this.props.pixel_array");
         const css_setup = {
@@ -100,54 +106,113 @@ class CanvasToolsMenu extends Component {
         }
 
     }
-
     render(){
         this.pixelSizeSVG = '<use xlink:href="./images/svg/solid.svg#octagon" />';
+        const paintBrushSVG = '<use xlink:href="./images/svg/solid.svg#paint-brush" />';
         const clearCanvasSVG = '<use xlink:href="./images/svg/solid.svg#eraser" />';
-
+        const brush_sizes = [2, 4, 8, 10, 12, 15, 16, 19 ];
         let pixel_brushes=[];
         return (
             <nav className="fixed_header">
                 <ul className="pixel_tools_menu">
-                    <li className="pixel_tool">
-                        <button className="btn btn-danger" onClick={()=>this.resetCanvas(true)}><svg dangerouslySetInnerHTML={{__html: clearCanvasSVG }} /></button>
+                    <li className="pixel_tool brush_icon">
+                        <ToolButton
+                            active={ (this.props.current_tool == PAINTBRUSH) ? true : false }
+                            icon="paint-brush"
+                            onClick={ ()=>this.props.selectTool(PAINTBRUSH) } >
+                            <b>Brush Size</b>
+                            <SizePicker
+                                sizelist={brush_sizes}
+                                selected={this.props.pixel_size}
+                                key="brush_list"
+                                onClick={this.props.setPixelSize}
+                                icon={this.pixelSizeSVG}
+                                 />
+                        </ToolButton>
                     </li>
-                    <li className="pixel_tool"></li>
-                    <li className="pixel_tool"></li>
 
-                    <li className="pixel_tool">
+                    <li className="pixel_tool brush_icon">
+                        <ToolButton
+                            active={ (this.props.current_tool == ERASER) ? true : false }
+                            icon="eraser"
+                            onClick={ ()=>this.props.selectTool(ERASER) } >
+                            <b>Eraser Size</b>
+                            <SizePicker
+                                sizelist={brush_sizes}
+                                selected={this.props.pixel_size}
+                                key="eraser_brush_list"
+                                onClick={this.props.setPixelSize}
+                                icon={this.pixelSizeSVG}
+                                 />
+                        </ToolButton>
+                    </li>
+                    <li className="pixel_tool brush_icon">
                         <ColorPicker
+                            latest_color={this.props.latest_pixel_color}
                             color_schemes={ this.props.color_schemes }
                             selected={ this.props.pixel_color || this.state.default_props.pixel_color }
                             onChangeComplete={ (e)=>this.onColorInputChange(e) }
                         />
                     </li>
-                    <li className="pixel_tool size-picker-wrap">
-                        <SizePicker
-                            sizelist={[2, 4, 8, 10, 12, 15, 16, 19 ]}
-                            selected={this.props.pixel_size}
-                            key="brush_list"
-                            onClick={this.props.setPixelSize}
-                            icon={this.pixelSizeSVG}
-                             />
+                    <li className="pixel_tool brush_icon file_uploader">
+                        <ToolButton
+                            active={(this.props.current_tool == UPLOAD) ? true : false}
+                            icon="upload"
+                            onClick={ ()=>this.props.selectTool(UPLOAD) }>
+                            <label htmlFor="file-trigger">
+                                Upload File
+                                <input
+                                    type="file"
+                                    onChange={(e)=>this.onFilePreview(e)}
+                                    id="file-trigger" name="file-trigger" />
+                            </label>
+                            <b>Render Size</b>
+                            <SizePicker
+                                sizelist={brush_sizes}
+                                selected={this.props.pixel_size}
+                                key="upload_brush_list"
+                                onClick={this.props.setPixelSize}
+                                icon={this.pixelSizeSVG}
+                                 />
+                        </ToolButton>
                     </li>
-                    <li className="pixel_tool size-picker-wrap">
-                        <SizePicker
-                            sizelist={[2, 4, 8, 10, 12]}
-                            selected={this.props.render_pixel_size}
-                            key="render_list"
-                            onClick={this.props.setRenderPixelSize}
-                            icon={this.pixelSizeSVG}
-                             />
+                    <li className="pixel_tool brush_icon">
+                        <ToolButton
+                            active={(this.props.current_tool == SAVE) ? true : false}
+                            icon="save"
+                            onClick={ ()=>this.props.selectTool(SAVE) }>
+                            <b>Export Format</b>
+                            <div>
+                                <button onClick={()=>{this.generatePixelArt('css')}}>CSS</button>
+                                <button onClick={()=>{this.generatePixelArt('svg')}}>SVG</button>
+                                <button onClick={()=>{this.generatePixelArt('png')}}>PNG</button>
+                            </div>
+                        </ToolButton>
+                    </li>
+
+
+
+
+
+
+                    <li className="pixel_tool"></li>
+                    <li className="pixel_tool"></li>
+
+
+                    <li className="pixel_tool">
+                        <button className="btn btn-danger" onClick={()=>this.resetCanvas(true)}><svg dangerouslySetInnerHTML={{__html: clearCanvasSVG }} /></button>
+                    </li>
+
+
+                    <li className="pixel_tool">
+
                     </li>
 
                     <li className="pixel_tool hidden-md-down">
-                        <input type="file" onChange={(e)=>this.onFilePreview(e)} />
+
                     </li>
                     <li className="pixel_tool">
-                        <button onClick={()=>{this.generatePixelArt('css')}}>CSS</button>
-                        <button onClick={()=>{this.generatePixelArt('svg')}}>SVG</button>
-                        <button onClick={()=>{this.generatePixelArt('png')}}>PNG</button>
+
                     </li>
 
                 </ul>
@@ -170,8 +235,8 @@ function mapStateToProps(state) {
         canvas_ctx: state.canvas_ctx,
         pixel_canvas: state.pixel_canvas,
         pixel_array: state.pixel_array,
-        color_schemes: state.color_schemes
-
+        color_schemes: state.color_schemes,
+        current_tool: state.current_tool,
     }
 }
 
@@ -186,6 +251,8 @@ function mapDispatchToProps(dispatch){
       setRenderPixelSize,
       generatePixelArtCss, generatePixelArtSvg, generatePixelArtPng,
       setMainColorScheme,
+      selectTool,
+      displayPreviewPopup
   }, dispatch);
 }
 export default connect(mapStateToProps,mapDispatchToProps)(CanvasToolsMenu);

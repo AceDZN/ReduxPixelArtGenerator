@@ -8,14 +8,15 @@ body {
   max-width: 100%;
   overflow-x: hidden; }
   body #app {
-    padding: 60px 0;
+    padding: 0;
     width: 100%;
     overflow-x: hidden; }
   body .fixed_header {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    height: 500px;
+    width: 60px;
     background: #083C5D;
     z-index: 5;
     color: #fff;
@@ -66,6 +67,14 @@ ul.list-group {
     display: inline-block;
     height: 60px;
     vertical-align: middle; }
+    .pixel_tools_menu .pixel_tool b {
+      font-weight: 100;
+      font-size: 10px;
+      display: block;
+      line-height: 1.5;
+      padding: 5px; }
+    .pixel_tools_menu .pixel_tool.file_uploader .tool-item .child-reveal {
+      padding: 10px 10px 20px; }
     .pixel_tools_menu .pixel_tool.size-picker-wrap {
       width: 100px; }
     .pixel_tools_menu .pixel_tool .page-link.icon_item {
@@ -77,27 +86,46 @@ ul.list-group {
         max-height: 36px;
         margin: 0;
         display: block; }
+    .pixel_tools_menu .pixel_tool .tool-item {
+      position: relative; }
+      .pixel_tools_menu .pixel_tool .tool-item.active .btn.tool-button {
+        background-color: #5bc0de; }
+      .pixel_tools_menu .pixel_tool .tool-item .child-reveal {
+        position: absolute;
+        top: -10px;
+        padding: 0 20px 20px;
+        background: #083c5c;
+        left: 100%;
+        width: 200px;
+        box-sizing: border-box; }
+      .pixel_tools_menu .pixel_tool .tool-item .btn.tool-button {
+        color: #353535;
+        background-color: #f1f3f5; }
+        .pixel_tools_menu .pixel_tool .tool-item .btn.tool-button svg {
+          width: 20px;
+          height: 30px;
+          fill: #353535; }
     .pixel_tools_menu .pixel_tool .btn {
       display: block;
       height: 100%;
-      padding: 0 1rem; }
-      .pixel_tools_menu .pixel_tool .btn svg {
-        height: 100%; }
+      padding: 0 .5rem; }
     .pixel_tools_menu .pixel_tool svg {
       width: 20px;
-      height: 40px;
+      height: 30px;
       fill: #fff; }
     .pixel_tools_menu .pixel_tool .acedzn-color-picker {
-      width: 120px;
+      width: 100%;
       height: 100%;
       position: relative;
       display: block; }
       .pixel_tools_menu .pixel_tool .acedzn-color-picker .color_swatch {
-        width: 60px;
+        width: 40px;
         display: inline-block;
         height: 100%;
         vertical-align: top;
-        box-shadow: inset 0 0 0px 5px #fff; }
+        box-shadow: inset 0 0 0px 2px #fff; }
+        .pixel_tools_menu .pixel_tool .acedzn-color-picker .color_swatch svg {
+          height: 40px; }
       .pixel_tools_menu .pixel_tool .acedzn-color-picker svg {
         width: 20px;
         padding: 1px;
@@ -150,9 +178,10 @@ ul.list-group {
         width: 320px;
         position: absolute;
         z-index: 10;
-        top: 100%;
+        top: -30px;
+        left: 50px;
         background: #083c5c;
-        border-radius: 0 0 5px 5px;
+        border-radius: 0 5px 5px 0;
         padding: 5px; }
         .pixel_tools_menu .pixel_tool .acedzn-color-picker .picker-popup.open {
           display: block; }
@@ -166,6 +195,18 @@ ul.list-group {
           display: block;
           line-height: 1.5;
           padding: 5px; }
+    .pixel_tools_menu .pixel_tool .rangeslider.rangeslider-horizontal {
+      margin: 10px 0 0;
+      height: 5px; }
+      .pixel_tools_menu .pixel_tool .rangeslider.rangeslider-horizontal .rangeslider__handle {
+        width: 30px;
+        height: 15px; }
+        .pixel_tools_menu .pixel_tool .rangeslider.rangeslider-horizontal .rangeslider__handle:after {
+          width: 20px;
+          height: 9px;
+          top: 2px;
+          left: 4px;
+          border-radius: 10px; }
     .pixel_tools_menu .pixel_tool .rangeslider-horizontal .rangeslider__handle-tooltip {
       top: 37px !important; }
     .pixel_tools_menu .pixel_tool .rangeslider-horizontal .rangeslider__handle-tooltip:after {
@@ -177,8 +218,91 @@ ul.list-group {
       top: -8px !important;
       bottom: auto !important; }
 
-.css-preview-block {
+.file_uploader label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  height: 38px;
+  background: #3498db;
+  box-shadow: inset 0 0 0 5px #FFFFFF;
+  color: #fff;
+  font-weight: bold;
+  letter-spacing: 2px;
+  padding: 0 20px;
+  line-height: 38px;
   position: relative; }
+  .file_uploader label:after {
+    content: '+';
+    font-size: 40px;
+    color: #3498db;
+    text-align: center;
+    line-height: 33px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 20%;
+    max-width: 100px;
+    height: 100%;
+    background-color: #FFFFFF; }
+  .file_uploader label:hover {
+    box-shadow: inset 0 0 0 5px #45a7e8; }
+    .file_uploader label:hover:after {
+      color: #ffffff;
+      background-color: #45a7e8; }
+
+.file_uploader input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  opacity: 0;
+  width: 100%; }
+
+.preview-block-wrap {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+  background: transparent; }
+  .preview-block-wrap.active {
+    display: block; }
+
+.preview-block-overlay {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.53);
+  left: 0;
+  z-index: 5;
+  padding: 50px; }
+  @media only screen and (min-width: 600px) {
+    .preview-block-overlay {
+      padding: 100px; } }
+
+.preview-block {
+  position: relative;
+  height: 100%;
+  min-height: 300px;
+  background: #fff;
+  box-sizing: border-box;
+  display: block;
+  padding: 36px;
+  margin: 50px;
+  z-index: 6; }
+  .preview-block img, .preview-block svg {
+    max-width: 100%; }
+  .preview-block .code-block {
+    position: relative;
+    width: 550px;
+    max-width: 100%;
+    height: 250px; }
+    .preview-block .code-block textarea {
+      width: 100%;
+      height: 100%; }
 
 textarea {
   width: 100%;
@@ -199,21 +323,6 @@ textarea {
 
 .container {
   position: inherit; }
-
-.css-code-block {
-  position: absolute;
-  top: 150px;
-  right: -400px;
-  width: 550px;
-  max-width: 100%;
-  height: 250px;
-  transition: right 1s;
-  z-index: 10; }
-  .css-code-block:hover {
-    right: 0px; }
-  .css-code-block textarea {
-    width: 100%;
-    height: 100%; }
 
 @media only screen and (min-width: 600px) {
   .fork-me {

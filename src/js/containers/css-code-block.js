@@ -18,7 +18,7 @@ class CssCodeBlock extends Component {
     }
 
     render() {
-        return (<textarea id="output" value={this.state.css_text}></textarea>);
+        return (<div className="code-block"><textarea id="output" value={this.state.css_text}></textarea></div>);
     }
 }
 

@@ -9,12 +9,12 @@ class PixelCanvas extends Component {
       super(props);
       this.state = {
           uploaded_image: '',
-          latest_uploaded_image:false
+          latest_uploaded_image: false
       };
     }
     componentDidMount() {
-        this.props.setCanvas({canvas:this.canvas,grid:this.canvas_grid});
-        this.props.setCanvasContext({canvas:this.canvas.getContext('2d'),grid:this.canvas_grid.getContext('2d')});
+        this.props.setCanvas({ canvas: this.canvas, grid: this.canvas_grid });
+        this.props.setCanvasContext({ canvas: this.canvas.getContext('2d'), grid: this.canvas_grid.getContext('2d') });
         this.resetCanvas();
     }
 
@@ -23,10 +23,10 @@ class PixelCanvas extends Component {
             this.makeGrid(nextProps.pixel_size);
         }
         if(!!nextProps.uploaded_image && !!nextProps.uploaded_image.loading && !this.state.loading){
-            this.setState({loading:true});
+            this.setState({ loading: true });
         }
         if(!!nextProps.uploaded_image && !nextProps.uploaded_image.loading && !!this.state.loading){
-            this.setState({loading:false});
+            this.setState({ loading: false });
         }
 
         if(nextProps.canvas_clear!==this.props.canvas_clear){
@@ -38,8 +38,8 @@ class PixelCanvas extends Component {
         if(!this.canvas) return;
         this.ctx = this.canvas.getContext('2d');
         this.grid_ctx = this.canvas_grid.getContext('2d');
-        this.props.setCanvas({canvas:this.canvas,grid:this.canvas_grid});
-        this.props.setCanvasContext({canvas:this.canvas.getContext('2d'),grid:this.canvas_grid.getContext('2d')});
+        this.props.setCanvas({ canvas: this.canvas, grid: this.canvas_grid });
+        this.props.setCanvasContext({ canvas: this.canvas.getContext('2d'), grid: this.canvas_grid.getContext('2d') });
 
         var w = (this.props.default_props ? this.props.default_props.canvas_width : this.canvas.clientWidth);
         var h = (this.props.default_props ? this.props.default_props.canvas_height : this.canvas.clientHeight);
@@ -75,37 +75,12 @@ class PixelCanvas extends Component {
             for (var col = 0; col < h; col++) {
                 var i = 5 * row + col;
                 if (pixels[i] == 1) {
-                    /*
-                  this.grid_ctx.beginPath();
-                  this.grid_ctx.rect(col * size, row * size, size, size);
-
-                  this.grid_ctx.fill();
-                  this.grid_ctx.closePath;
-                  */
                   this.grid_ctx.fillStyle = "#f1f4f5";
                   this.grid_ctx.fillRect(col * size, row * size, size, size);
                 }
           }
         }
-        console.log((w/size),"this.canvas.width");
-        console.log( (h/size),"this.canvas.height");
 
-
-
-
-
-        //
-        /*
-        var odd=false;
-        for(var i = 0; i<w;  i+=size){
-            odd = !odd;
-            for(var j = 0; j < h; j+=size){
-                this.grid_ctx.fillStyle=(odd ? "#ffffff" : "#dadfe087");
-                odd = !odd;
-                this.grid_ctx.fillRect(i, j, size, size);
-            }
-        }
-        */
     }
     getPosition(e) {
         var targ;
@@ -161,8 +136,9 @@ class PixelCanvas extends Component {
     }
 
     drawPixel(e){
-        let pixel_size = this.props.pixel_size;
-        let pixel_color = this.props.pixel_color;
+        const pixel_size = this.props.pixel_size;
+        const pixel_color = this.props.pixel_color;
+        const current_tool = this.props.current_tool;
 
         this.setState({ x: e.screenX, y: e.screenY });
 
@@ -178,10 +154,10 @@ class PixelCanvas extends Component {
         if (position.y + pixel_size > this.h) {
           cy = this.h - pixel_size;
         }
-        if (e.ctrlKey || e.metaKey || pixel_color=="transparent") {
-            this.drawPixelOnScreen(cx, cy, null, true);
+        if (e.ctrlKey || e.metaKey || current_tool=="eraser") {
+            this.drawPixelOnScreen(cx, cy, null, true); // ERASE PIXELS IF CURRENT SELECTED TOOL IS ERASER
         } else {
-            this.drawPixelOnScreen(cx, cy, pixel_color);
+            this.drawPixelOnScreen(cx, cy, pixel_color); // DRAW PIXELS
         }
     }
     renderLoaderOnCanvas(){
@@ -223,11 +199,11 @@ class PixelCanvas extends Component {
 function mapStateToProps(state) {
   return {
       default_props: state.default_props,
+      current_tool: state.current_tool,
       pixel_size: state.pixel_size,
       pixel_color: state.pixel_color,
       canvas_clear: state.canvas_clear,
       uploaded_image: state.uploaded_image,
-      canvas_ctx: state.canvas_ctx
   }
 }
 

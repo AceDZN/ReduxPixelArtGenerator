@@ -36,7 +36,14 @@ export function generatePixelArtPng(setup){
 export function generatePixels(setup){
     if(!setup || !setup.ctx){console.log("can't generatePixels - no canvas context"); return;}
 
+    return new Promise((resolve,reject)=>{
+        var res = requestAnimationFrame(()=>{makePixels(setup);};
+        resolve(res);
+    });
 
+}
+
+function makePixels(setup){
     const size = DEFAULT_RENDER_PIXEL_SIZE;
 
     let pixel_array = {};
@@ -104,6 +111,13 @@ export function generatePixels(setup){
     setup.pixel_array = pixel_array;
     return setup;
 }
+
+
+
+
+
+
+
 
 
 function generatePixelArt(setup,type){
@@ -211,7 +225,9 @@ function generatePNGPixelArt(s){
     let result = {};
 
     return loadImage(loader).then(()=>{
-        ctx.drawImage( loader, 0, 0, loader.width, loader.height );
+        requestAnimationFrame(()=>{
+            ctx.drawImage( loader, 0, 0, loader.width, loader.height )
+        });
         pixel_art.png_to_url = can.toDataURL();
         result = {
             type: 'png',

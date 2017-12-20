@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Slider from 'react-rangeslider';
 
 
-export default class SizePicker extends Component {
+export class SizePicker extends Component {
     constructor(props) {
       super(props);
       this.state = {

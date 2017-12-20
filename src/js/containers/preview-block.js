@@ -1,7 +1,10 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {clearCanvas} from '../actions/index';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { clearCanvas } from '../actions/index';
+import { displayPreviewPopup } from '../actions/preview-popup';
+
+import CssCodeBlock from './css-code-block';
 
 class PreviewBlock extends Component {
     constructor(props) {
@@ -73,28 +76,31 @@ class PreviewBlock extends Component {
             }
         } else {
             return(
-                <h2>Nothing to see here</h2>
+                <h2 className="text-center text-warning">Nothing to see here</h2>
             )
         }
 
     }
-    pixel_array(){
-        if(!this.props.pixel_array || !this.props.pixel_array.length) return;
+    renderPreviewBlock(){
+        //const previewStyle = {height: this.props.default_props.canvas_height};
         return (
-            <h1>
-                {this.props.pixel_array.length}
-                <br />
-                {this.props.pixel_array[this.props.pixel_array.length-1].size}
-            </h1>
-        )
+            <div className="row">
+                <div className="col">
+                    { this.renderPreview() }
+                </div>
+                <div className="col">
+                    <CssCodeBlock />
+                </div>
+            </div>
+        );
     }
     render(){
-        const previewStyle = {height: this.props.default_props.canvas_height};
+
         return (
-            <div>
-                {this.pixel_array()}
-                <div className="css-preview-block" style={previewStyle}>
-                    {this.renderPreview()}
+            <div className={`preview-block-wrap ${this.props.preview_active ? 'active' : '' }`}>
+                <div className={`preview-block-overlay`} onClick={()=>this.props.displayPreviewPopup(false)}></div>
+                <div className={`preview-block`}>
+                    { this.renderPreviewBlock() }
                 </div>
             </div>
         )
@@ -105,16 +111,12 @@ function mapStateToProps(state) {
   return {
       default_props: state.default_props,
       canvas_clear: state.canvas_clear,
-      pixel_size: state.pixel_size,
-      pixel_color: state.pixel_color,
-      canvas_ctx: state.canvas_ctx,
       css_generator: state.css_generator,
-      uploaded_image: state.uploaded_image,
-      pixel_array: state.pixel_array
+      preview_active: state.preview_active
   }
 }
 
 function mapDispatchToProps(dispatch){
-  return bindActionCreators({clearCanvas}, dispatch);
+  return bindActionCreators({clearCanvas,displayPreviewPopup}, dispatch);
 }
 export default connect(mapStateToProps,mapDispatchToProps)(PreviewBlock);

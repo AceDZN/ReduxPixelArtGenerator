@@ -1,6 +1,6 @@
 import React,{ Component } from 'react';
 import { getCorrectTextColor } from '../../utils/';
-export default class ColorPicker extends Component {
+export class ColorPicker extends Component {
     constructor(props) {
       super(props);
       this.state = {
@@ -11,11 +11,7 @@ export default class ColorPicker extends Component {
         //console.log("props:",nextProps)
     }
     handleColorSelect(c){
-
         let tempState = {color_pallete_open: false};
-        if(c.hex == 'transparent'){
-            tempState.latest_color = this.props.selected;
-        }
         this.setState(tempState);
         if(this.props.onChangeComplete){
             this.props.onChangeComplete(c);
@@ -67,7 +63,7 @@ export default class ColorPicker extends Component {
                 c_scheme = this.renderColorScheme(this.props.color_schemes.current_scheme, 5, 'Currently used:');
             }
             if(this.props.color_schemes.main_scheme.length>1){
-                m_scheme = this.renderColorScheme(this.props.color_schemes.main_scheme,0);
+                m_scheme = this.renderColorScheme(this.props.color_schemes.main_scheme,0, 'Main Colors');
             }
             if(this.props.color_schemes.popular_scheme.length>1){
                 p_scheme = this.renderColorScheme(this.props.color_schemes.popular_scheme, 5, 'Popular');
@@ -90,7 +86,7 @@ export default class ColorPicker extends Component {
         console.log(this.props.selected);
         let newState ={color_pallete_open: o};
         if(this.props.selected == 'transparent'){
-            this.handleColorSelect(this.state.latest_color);
+            this.handleColorSelect(this.props.latest_color);
         }
         this.setState(newState);
     }
@@ -101,8 +97,8 @@ export default class ColorPicker extends Component {
         const pixelColorSVGstyle = {fill: (this.props.selected=='transparent' ? 'eraser' : getCorrectTextColor(this.props.selected))};
 
         const colorStyle = {
-            backgroundColor: (this.props.selected=='transparent' ? this.state.latest_color : this.props.selected),
-            boxShadow: (this.props.selected=='transparent' ? 'none' : '#ffffff 0px 0px 0px 5px inset')
+            backgroundColor: (this.props.selected=='transparent' ? this.props.latest_color : this.props.selected),
+
         };
         const eraserStyle = {boxShadow: (this.props.selected=='transparent' ? 'rgb(255, 11, 11) 0px 0px 0px 5px inset' : 'none')};
         return (
@@ -112,15 +108,7 @@ export default class ColorPicker extends Component {
                     {this.renderColorPickerPopup()}
 
                 </div>
-                <span
-                    onClick={()=>this.handleColorSelect({hex: 'transparent'})}
-                    className="eraser"
 
-                    >
-                    <div style={eraserStyle}>
-                        <svg dangerouslySetInnerHTML={{__html: clearCanvasSVG }} />
-                    </div>
-                </span>
             </div>
         );
     }

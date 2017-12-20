@@ -12,20 +12,27 @@ import CssGeneratorReducer from './reducer-css-generator';
 import UploadedImageReducer from './reducer-uploaded-image';
 import PixelCanvasReducer from './pixel-canvas-reducer';
 import PixelArrayReducer from './reducer-pixel-array';
+import PreviewActiveReducer from './reducer-preview-active';
+
+import ToolsReducer from './reducer-tools';
 
 const rootReducer = combineReducers({
     default_props: CanvasSetupReducer,
+    canvas_clear: CanvasClearReducer,
+    canvas_ctx: CanvasContextReducer,
+    preview_active: PreviewActiveReducer,
+    canvas_obj: CanvasObjectReducer,
+
     pixel_color: PixelColorReducer,
     pixel_size: PixelSizeReducer,
     render_pixel_size: RenderPixelSizeReducer,
-    canvas_clear: CanvasClearReducer,
-    canvas_ctx: CanvasContextReducer,
-    canvas_obj: CanvasObjectReducer,
+
     css_generator: CssGeneratorReducer,
     uploaded_image: UploadedImageReducer,
     pixel_canvas: PixelCanvasReducer,
     pixel_array: PixelArrayReducer,
     color_schemes: ColorSchemesReducer,
+    current_tool: ToolsReducer,
 });
 
 export default rootReducer;
