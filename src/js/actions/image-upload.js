@@ -95,13 +95,6 @@ function resizeImage(setup,image,dispatch){
 }
 
 function renderImage(setup,dispatch){
-    let promise = new Promise((resolve, reject)=>{
-
-    });
-
-
-
-
     const canvas = setup.canvas,
     ctx = setup.ctx,
     canvas_width = setup.canvas_width,
