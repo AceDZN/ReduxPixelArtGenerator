@@ -277,8 +277,7 @@ ul.list-group {
   height: 100%;
   background: rgba(0, 0, 0, 0.53);
   left: 0;
-  z-index: 5;
-  padding: 50px; }
+  z-index: 5; }
   @media only screen and (min-width: 600px) {
     .preview-block-overlay {
       padding: 100px; } }
@@ -422,3 +421,12 @@ textarea {
   position: absolute;
   left: -10000px;
   top: -100000px; }
+
+.adsbygoogle {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  max-height: 90px;
+  background: transparent; }

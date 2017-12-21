@@ -659,3 +659,12 @@ textarea{
 
 /* Add image to the DOM here so user can't see it */
 #measure { position: absolute; left: -10000px; top: -100000px;}
+.adsbygoogle{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    max-height: 90px;
+    background: transparent;
+}

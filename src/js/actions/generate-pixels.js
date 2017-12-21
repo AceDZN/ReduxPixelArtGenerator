@@ -37,7 +37,7 @@ export function generatePixels(setup){
     if(!setup || !setup.ctx){console.log("can't generatePixels - no canvas context"); return;}
 
     return new Promise((resolve,reject)=>{
-        var res = requestAnimationFrame(()=>{makePixels(setup);};
+        var res = requestAnimationFrame(()=>{makePixels(setup);});
         resolve(res);
     });
 

@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import { SizePicker } from '../components/tools/size-picker';
 import { ColorPicker } from '../components/tools/color-picker';
 import { ToolButton } from '../components/tools/tool-button';
+import { setUploadedImage } from '../actions/image-upload';
 import { displayPreviewPopup } from '../actions/preview-popup';
 //Actions
 import { setPixelColor, setPixelSize, setCanvasDefaults, clearCanvas,loadUploadedImage,setRenderPixelSize, selectTool } from '../actions/index';
